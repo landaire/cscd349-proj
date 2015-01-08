@@ -1,0 +1,78 @@
+Design notes:
+
+- Turn based
+- 6 good guys to choose from (max party 4, min 2)
+- 20 bad guys
+- Could have parties increase the attack damage toward 
+- Stealth could be an option
+	- Sneak past enemies
+	- Enemy can have % chance of spotting them
+	- If the user party is spotted, the enemy does a surprise attack (normal attack, but is done immediately)
+- Classes of characters:
+	- Magic
+		- Subclass 1
+			- Lower magic attack
+			- High attack speed
+			- Higher armor
+		- Subclass 2
+			- Higher magic attack
+			- Low attack speed
+			- Lower armor
+		- Subclass 3
+			- Moderate magic attack
+			- Moderate armor
+			- Moderate attack speed
+		- Sublcass 4
+			- Healing class (other attributes to be determined)
+	- Physical (someone with a physical weapon)
+		- Subclass 1
+			- Lower armor
+			- Ranged attack
+		- Subclass 2
+			- Higher armor
+			- Close attack
+		- Weapons:
+			- Close:
+				- Sword
+					- High attack speed
+					- Moderate damage
+				- Claymore sword:
+					- Very low attack speed
+					- Very high damage
+			- Ranged:
+				- Crossbow
+					- Very high accuracy
+					- Moderate damage
+					- Fast attack speed
+				- Longbow
+					- Low accuracy
+					- Moderate damage
+					- Moderate attack speed
+- "Hero" attributes
+	- Armor could reduce damage up to a certain %
+	- Players could be removed from the group if they lose too much health
+	- Individual health
+	- Weapons/magic are two separate things
+	- Magic could effect armor on opposite class
+	- Player leveling?
+- "Enemy" attributes
+	- Enemy groups?
+	- Enemy leveling?
+	- Random weapon assignment based off enemy class
+- Game flow:
+	- Go through door
+	- Enemy there?
+	- Items in a door?
+	- Items are received after the battle
+		- Potion of health
+			- Use a potion, or attack
+		- Crossbow bolts
+		- Arrows
+	- Turn:
+		- Choose to use item, or take other part of the turn
+		- If "use item" is chosen dialog appears with a list of items in inventory
+	- Maze
+	- Enemy generation patterns:
+		- Groups of enemies
+		- Randomly generated levels of people in the group
+		- If toughest boss is generated in the group, maybe no other enemies are added to the group?
