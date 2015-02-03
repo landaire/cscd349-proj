@@ -188,7 +188,7 @@ public class Dungeon {
         representations.add(r);
 
         e = new Representation();
-        e.add(config.get("player"), Color.Player.value);
+        e.add(config.get("player"), Color.Yellow.value);
         r.put(config.get("player"), e);
 
         e = new Representation();
