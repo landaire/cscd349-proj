@@ -15,6 +15,7 @@
 */
 package com.googlecode.blacken.examples;
 
+import com.cscd.game.Color;
 import com.googlecode.blacken.bsp.BSPTree;
 import com.googlecode.blacken.colors.ColorNames;
 import com.googlecode.blacken.colors.ColorPalette;
@@ -187,7 +188,7 @@ public class Dungeon {
         representations.add(r);
 
         e = new Representation();
-        e.add(config.get("player"), 0xe4);
+        e.add(config.get("player"), Color.Player.value);
         r.put(config.get("player"), e);
 
         e = new Representation();
