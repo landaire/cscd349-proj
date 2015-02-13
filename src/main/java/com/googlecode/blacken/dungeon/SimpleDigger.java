@@ -49,7 +49,7 @@ public class SimpleDigger<T> {
         return bsp;
     }
     /**
-     * Dig a prepared dungeon, starting with the halls.
+     * Dig a prepared grid, starting with the halls.
      *
      * <p>The fall-back method precludes a lot of selective nulls. Either one of
      * the floors needs to be defined as non-null, or the diggable cell needs

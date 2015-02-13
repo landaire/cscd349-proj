@@ -15,7 +15,8 @@
 */
 package com.googlecode.blacken.examples;
 
-import com.cscd.game.Color;
+import com.cscd.game.ui.Color;
+import com.cscd.game.ui.character.Representation;
 import com.googlecode.blacken.bsp.BSPTree;
 import com.googlecode.blacken.colors.ColorNames;
 import com.googlecode.blacken.colors.ColorPalette;
@@ -48,96 +49,6 @@ import org.slf4j.LoggerFactory;
  * @author Steven Black
  */
 public class Dungeon {
-    private class Representation {
-        public List<Integer> codepoints = new ArrayList<>();
-        public List<List<Integer>> colors = new ArrayList<>();
-        /**
-         * Add a codepoint and a color.
-         * @param codepoint
-         * @param color
-         */
-        public void add(Integer codepoint, Integer color) {
-            this.codepoints.add(codepoint);
-            List<Integer> t = new ArrayList<>(1);
-            t.add(color);
-            this.colors.add(t);
-        }
-        public void add(Integer codepoint, Integer... colorset) {
-            this.codepoints.add(codepoint);
-            List<Integer> t = new ArrayList<>(1);
-            t.addAll(Arrays.asList(colorset));
-            this.colors.add(t);
-        }
-        /**
-         * Add a codepoint and a palette range.
-         * @param codepoint
-         * @param startColor
-         * @param count
-         */
-        public void add(Integer codepoint, int startColor, int count) {
-            this.codepoints.add(codepoint);
-            List<Integer> t = new ArrayList<>(count);
-            while(count-- > 0) {
-                t.add(startColor++);
-            }
-            this.colors.add(t);
-        }
-        /**
-         * Add a codepoint and a color series.
-         * @param codepoint
-         * @param colorItr
-         */
-        public void add(Integer codepoint, Iterator<Integer> colorItr) {
-            this.codepoints.add(codepoint);
-            List<Integer> t = new ArrayList<>();
-            while(colorItr.hasNext()) {
-                t.add(colorItr.next());
-            }
-            this.colors.add(t);
-        }
-        /**
-         * Get the codepoint/color for a float (likely Perlin) value.
-         * @param value 0.0 to 1.0
-         * @return {codepoint, color}
-         */
-        public Integer[] get(float value) {
-            if (value < 0) { value *= -1; }
-            int index = (int)Math.floor(value * this.codepoints.size());
-            int clrIdx = (int)Math.floor(value * this.colors.get(index).size());
-            Integer codepoint = this.codepoints.get(index);
-            Integer color = this.colors.get(index).get(clrIdx);
-            return new Integer[] {codepoint, color};
-        }
-        public List<Integer> getColors(int index) {
-            return this.colors.get(index);
-        }
-        public List<Integer> getColors(double value) {
-            if (value < 0) { value *= -1; }
-            int index = (int)Math.floor(value * this.codepoints.size());
-            return this.colors.get(index);
-        }
-        public Integer getColor(double value) {
-            if (value < 0) { value *= -1; }
-            int index = (int)Math.floor(value * this.codepoints.size());
-            int clrIdx = (int)Math.floor(value * this.colors.get(index).size());
-            return this.colors.get(index).get(clrIdx);
-        }
-        public Integer getCodePoint(double value) {
-            if (value < 0) { value *= -1; }
-            int index = (int)Math.floor(value * this.codepoints.size());
-            return this.codepoints.get(index);
-        }
-        public Integer getCodePoint(int index) {
-            return this.codepoints.get(index);
-        }
-        public int size() {
-            return this.codepoints.size();
-        }
-        public boolean isEmpty() {
-            return this.codepoints.isEmpty();
-        }
-    }
-
     private static final Logger LOGGER = LoggerFactory.getLogger(Dungeon.class);
     /**
      * TerminalInterface used by the example
@@ -191,6 +102,10 @@ public class Dungeon {
         e.add(config.get("player"), Color.Yellow.value);
         r.put(config.get("player"), e);
 
+//        e = new Representation();
+//        e.add(config.get("party_1"), Color.Player.value);
+//        r.put(config.get("party_1"), e);
+//
         e = new Representation();
         e.add(config.get("room:door"), 58, 130, 94, 94, 94, 94, 94, 94, 94, 94);
         r.put(config.get("room:door"), e);
@@ -370,6 +285,7 @@ public class Dungeon {
         // game specific
         config.put("void", " ".codePointAt(0));
         config.put("player", "@".codePointAt(0));
+        config.put("party_1", "!".codePointAt(0));
         config.put("water", "~".codePointAt(0));
         config.put("mountains", "^".codePointAt(0));
 
@@ -392,6 +308,13 @@ public class Dungeon {
 
     }
 
+    public Grid<Integer> getGrid() {
+        return this.grid;
+    }
+
+    public Integer getConfigOption(String key) {
+        return config.get(key);
+    }
 
     /**
      * Make a map
@@ -497,6 +420,10 @@ public class Dungeon {
             }
         }
         return this.quit;
+    }
+
+    public boolean playerCanAccessPosition(Integer there) {
+        return passable.contains(there) || there == nextLocation;
     }
 
     private void updateMessage(boolean press) {

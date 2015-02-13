@@ -1,4 +1,4 @@
-package com.cscd.game;
+package com.cscd.game.ui;
 
 /**
  * Created by Lander Brandt on 2/3/15.
