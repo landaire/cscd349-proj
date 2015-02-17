@@ -98,4 +98,8 @@ public class Representation {
     public boolean isEmpty() {
         return this.codepoints.isEmpty();
     }
+
+    public Integer getPrimaryCodePoint() {
+        return this.codepoints.get(0);
+    }
 }

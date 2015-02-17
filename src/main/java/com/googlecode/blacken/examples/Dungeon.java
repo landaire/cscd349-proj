@@ -15,8 +15,12 @@
 */
 package com.googlecode.blacken.examples;
 
+import com.cscd.game.event.RecenterMapEvent;
+import com.cscd.game.event.UpdateMessageEvent;
+import com.cscd.game.goals.DungeonGoals;
 import com.cscd.game.ui.Color;
 import com.cscd.game.ui.character.Representation;
+import com.cscd.game.ui.character.SnakePlayer;
 import com.googlecode.blacken.bsp.BSPTree;
 import com.googlecode.blacken.colors.ColorNames;
 import com.googlecode.blacken.colors.ColorPalette;
@@ -30,16 +34,9 @@ import com.googlecode.blacken.grid.Point;
 import com.googlecode.blacken.grid.Positionable;
 import com.googlecode.blacken.swing.SwingTerminal;
 import com.googlecode.blacken.terminal.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+
+import java.util.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +45,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Steven Black
  */
-public class Dungeon {
+public class Dungeon implements Observer {
     private static final Logger LOGGER = LoggerFactory.getLogger(Dungeon.class);
     /**
      * TerminalInterface used by the example
@@ -58,13 +55,12 @@ public class Dungeon {
      * Whether to quit the loop or not
      */
     protected boolean quit;
+    private SnakePlayer player;
     private Grid<Integer> grid;
     private Random rand;
-    private int nextLocation;
     private final static Positionable MAP_START = new Point(1, 0);
     private final static Positionable MAP_END = new Point(-1, 0);
     private Positionable upperLeft = new Point(0, 0);
-    private Positionable player = new Point(-1, -1);
     private Integer underPlayer = -1;
     private boolean dirtyMsg = false;
     private boolean dirtyStatus = false;
@@ -325,7 +321,7 @@ public class Dungeon {
         BSPTree<Room> bsp = simpleDigger.setup(grid, config);
         List<Room> rooms = new ArrayList(bsp.findContained(null));
         Collections.shuffle(rooms, rand);
-        nextLocation = 0x31;
+        DungeonGoals.nextLocation = 0x31;
         int idx = 0;
         for (Integer c = 0x31; c < 0x3a; c++) {
             rooms.get(idx).assignToContainer(c);
@@ -371,7 +367,7 @@ public class Dungeon {
                 int bclr = 0;
                 EnumSet<CellWalls> walls = EnumSet.noneOf(CellWalls.class);
                 if (what >= '0' && what <= '9') {
-                    if (what > nextLocation) {
+                    if (what > DungeonGoals.nextLocation) {
                         walls = CellWalls.BOX;
                     }
                 }
@@ -391,7 +387,7 @@ public class Dungeon {
         int ch = BlackenKeys.NO_KEY;
         int mod;
         updateStatus();
-        movePlayerBy(0,0);
+        player.moveBy(0,0);
         this.message = "Welcome to Dungeon!";
         term.move(-1, -1);
         while (!quit) {
@@ -400,7 +396,7 @@ public class Dungeon {
             }
             updateMessage(false);
             showMap();
-            term.setCursorLocation(player.getY() - upperLeft.getY() + MAP_START.getY(), 
+            term.setCursorLocation(player.getY() - upperLeft.getY() + MAP_START.getY(),
                                    player.getX() - upperLeft.getX() + MAP_START.getX());
             this.term.getPalette().rotate(0xee, 10, +1);
             // term.refresh();
@@ -423,7 +419,7 @@ public class Dungeon {
     }
 
     public boolean playerCanAccessPosition(Integer there) {
-        return passable.contains(there) || there == nextLocation;
+        return passable.contains(there) || there == DungeonGoals.nextLocation;
     }
 
     private void updateMessage(boolean press) {
@@ -454,6 +450,8 @@ public class Dungeon {
         for (int x = 0; x < term.getWidth()-1; x++) {
             term.mvaddch(term.getHeight(), x, ' ');
         }
+
+        Integer nextLocation = DungeonGoals.nextLocation;
         if (nextLocation <= '9') {
             term.mvputs(term.getHeight(), 0, "Get the ");
             term.setCurForeground((nextLocation - '0') + 0x4);
@@ -492,25 +490,25 @@ public class Dungeon {
             case BlackenKeys.KEY_DOWN:
             case BlackenKeys.KEY_NP_2:
             case BlackenKeys.KEY_KP_DOWN:
-                movePlayerBy(+1,  0);
+                player.moveBy(+1,  0);
                 break;
             case 'k':
             case BlackenKeys.KEY_UP:
             case BlackenKeys.KEY_NP_8:
             case BlackenKeys.KEY_KP_UP:
-                movePlayerBy(-1,  0);
+                player.moveBy(-1,  0);
                 break;
             case 'h':
             case BlackenKeys.KEY_LEFT:
             case BlackenKeys.KEY_NP_4:
             case BlackenKeys.KEY_KP_LEFT:
-                movePlayerBy(0,  -1);
+                player.moveBy(0,  -1);
                 break;
             case 'l':
             case BlackenKeys.KEY_RIGHT:
             case BlackenKeys.KEY_NP_6:
             case BlackenKeys.KEY_KP_RIGHT:
-                movePlayerBy(0,  +1);
+                player.moveBy(0,  +1);
                 break;
             case ' ':
                 this.represent ++;
@@ -550,57 +548,6 @@ public class Dungeon {
             }
         }
         return true;
-    }
-
-    /**
-     * Move the player by an offset
-     * 
-     * @param y row offset (0 stationary)
-     * @param x column offset (0 stationary)
-     */
-    private void movePlayerBy(int y, int x) {
-        Integer there;
-        Positionable oldPos = player.getPosition();
-        try {
-            there = grid.get(player.getY() + y, player.getX() + x);
-        } catch(IndexOutOfBoundsException e) {
-            return;
-        }
-        if (passable.contains(there) || there == nextLocation) {
-            grid.set(oldPos.getY(), oldPos.getX(), underPlayer);
-            player.setPosition(player.getY() + y, player.getX() + x);
-            underPlayer = grid.get(player);
-            grid.set(player.getY(), player.getX(), 0x40);
-            int playerScreenY = player.getY() - upperLeft.getY() + MAP_START.getY();  
-            int playerScreenX = player.getX() - upperLeft.getX() + MAP_START.getX();
-            int ScreenY2 = (MAP_END.getY() <= 0 
-                    ? term.getHeight() -1 + MAP_END.getY() : MAP_END.getY());
-            int ScreenX2 = (MAP_END.getX() <= 0 
-                    ? term.getWidth() -1 + MAP_END.getX() : MAP_END.getX());
-            if (playerScreenY >= ScreenY2 || playerScreenX >= ScreenX2 ||
-                    playerScreenY <= MAP_START.getY() || 
-                    playerScreenX <= MAP_START.getX()) {
-                recenterMap();
-            }
-            if (there == nextLocation) {
-                StringBuilder buf = new StringBuilder();
-                buf.append("Got it.");
-                buf.append(' ');
-                if (there == '9') {
-                    buf.append("All done!");
-                } else {
-                    buf.append("Next is unlocked.");
-                }
-                this.underPlayer = config.get("room:floor");
-                nextLocation ++;
-                this.message = buf.toString();
-                dirtyStatus = true;
-                this.updateMessage(false);
-            }
-        } else if (there >= '0' && there <= '9') {
-            this.message = "That position is still locked.";
-            this.updateMessage(false);
-        }
     }
 
     private void recenterMap() {
@@ -756,5 +703,33 @@ public class Dungeon {
         vh = new ViewerHelper(term, "License", Obligations.getBlackenLicense());
         vh.setColor(7, 0);
         vh.run();
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        if (arg instanceof UpdateMessageEvent) {
+            UpdateMessageEvent event = (UpdateMessageEvent)arg;
+            this.message = event.message();
+
+            this.dirtyStatus = event.dirtyStatus();
+            this.updateMessage(event.updateMessage());
+        } else if (arg instanceof RecenterMapEvent) {
+            checkForRecenter(((RecenterMapEvent)arg).positionable());
+        }
+    }
+
+    private void checkForRecenter(Positionable player) {
+        grid.set(player.getY(), player.getX(), 0x40);
+        int playerScreenY = player.getY() - upperLeft.getY() + MAP_START.getY();
+        int playerScreenX = player.getX() - upperLeft.getX() + MAP_START.getX();
+        int ScreenY2 = (MAP_END.getY() <= 0
+                ? term.getHeight() -1 + MAP_END.getY() : MAP_END.getY());
+        int ScreenX2 = (MAP_END.getX() <= 0
+                ? term.getWidth() -1 + MAP_END.getX() : MAP_END.getX());
+        if (playerScreenY >= ScreenY2 || playerScreenX >= ScreenX2 ||
+                playerScreenY <= MAP_START.getY() ||
+                playerScreenX <= MAP_START.getX()) {
+            recenterMap();
+        }
     }
 }

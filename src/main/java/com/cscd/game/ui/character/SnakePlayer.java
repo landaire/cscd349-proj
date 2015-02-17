@@ -1,5 +1,10 @@
 package com.cscd.game.ui.character;
 
+import com.cscd.game.event.EventDispatcher;
+import com.cscd.game.event.EventDispatcherFactory;
+import com.cscd.game.event.RecenterMapEvent;
+import com.cscd.game.event.UpdateMessageEvent;
+import com.cscd.game.goals.DungeonGoals;
 import com.googlecode.blacken.examples.Dungeon;
 import com.googlecode.blacken.grid.Grid;
 import com.googlecode.blacken.grid.Positionable;
@@ -7,7 +12,7 @@ import com.googlecode.blacken.grid.Positionable;
 /**
  * Created by Lander Brandt on 2/13/15.
  */
-public class SnakePlayer implements Moveable {
+public class SnakePlayer implements Moveable, Positionable {
     private PositionableObject[] party;
     private Dungeon dungeon;
 
@@ -21,11 +26,16 @@ public class SnakePlayer implements Moveable {
         Integer there;
         Positionable oldPos = party[0].getPosition();
         Grid<Integer> grid = this.dungeon.getGrid();
+        Integer underPlayer = dungeon.getConfigOption("room:floor");
+        Positionable player = party[0];
+
         try {
             there = grid.get(player.getY() + y, player.getX() + x);
         } catch(IndexOutOfBoundsException e) {
             return;
         }
+
+        EventDispatcher dispatcher = EventDispatcherFactory.get();
 
         if (dungeon.playerCanAccessPosition(there)) {
             grid.set(oldPos.getY(), oldPos.getX(), underPlayer);
@@ -36,23 +46,15 @@ public class SnakePlayer implements Moveable {
             // moves to the head's last position, and so on
 
             for (PositionableObject positionable : party) {
-                positionable.setPosition(old);
+                positionable.setPosition(positionable.getY() + y, positionable.getX() + x);
+
+                grid.set(positionable.getY(), positionable.getX(), positionable.getRepresentation().getPrimaryCodePoint());
             }
-            player.setPosition(player.getY() + y, player.getX() + x);
-            underPlayer = grid.get(player);
-            grid.set(player.getY(), player.getX(), 0x40);
-            int playerScreenY = player.getY() - upperLeft.getY() + MAP_START.getY();
-            int playerScreenX = player.getX() - upperLeft.getX() + MAP_START.getX();
-            int ScreenY2 = (MAP_END.getY() <= 0
-                    ? term.getHeight() -1 + MAP_END.getY() : MAP_END.getY());
-            int ScreenX2 = (MAP_END.getX() <= 0
-                    ? term.getWidth() -1 + MAP_END.getX() : MAP_END.getX());
-            if (playerScreenY >= ScreenY2 || playerScreenX >= ScreenX2 ||
-                    playerScreenY <= MAP_START.getY() ||
-                    playerScreenX <= MAP_START.getX()) {
-                recenterMap();
-            }
-            if (there == nextLocation) {
+
+            // Special handling for the head. We're going to center the map around it.
+            dispatcher.recenter(new RecenterMapEvent(player));
+
+            if (there.equals(DungeonGoals.nextLocation)) {
                 StringBuilder buf = new StringBuilder();
                 buf.append("Got it.");
                 buf.append(' ');
@@ -61,15 +63,48 @@ public class SnakePlayer implements Moveable {
                 } else {
                     buf.append("Next is unlocked.");
                 }
-                this.underPlayer = config.get("room:floor");
-                nextLocation ++;
-                this.message = buf.toString();
-                dirtyStatus = true;
-                this.updateMessage(false);
+                DungeonGoals.nextLocation++;
+
+                // Notify the dungeon to update the message
+                dispatcher.updateMessage(new UpdateMessageEvent(buf.toString(), true, false));
             }
         } else if (there >= '0' && there <= '9') {
-            this.message = "That position is still locked.";
-            this.updateMessage(false);
+            dispatcher.updateMessage(new UpdateMessageEvent("That position is still locked.", false, false));
         }
+    }
+
+    @Override
+    public int getX() {
+        return party[0].getX();
+    }
+
+    @Override
+    public int getY() {
+        return party[0].getY();
+    }
+
+    @Override
+    public Positionable getPosition() {
+        return party[0];
+    }
+
+    @Override
+    public void setX(int x) {
+        throw new RuntimeException("Not implemented");
+    }
+
+    @Override
+    public void setY(int y) {
+        throw new RuntimeException("Not implemented");
+    }
+
+    @Override
+    public void setPosition(int y, int x) {
+        throw new RuntimeException("Not implemented");
+    }
+
+    @Override
+    public void setPosition(Positionable point) {
+        throw new RuntimeException("Not implemented");
     }
 }
