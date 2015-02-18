@@ -15,6 +15,8 @@
 */
 package com.googlecode.blacken.examples;
 
+import com.cscd.game.event.EventDispatcher;
+import com.cscd.game.event.EventDispatcherFactory;
 import com.cscd.game.event.RecenterMapEvent;
 import com.cscd.game.event.UpdateMessageEvent;
 import com.cscd.game.goals.DungeonGoals;
@@ -107,7 +109,7 @@ public class Dungeon implements Observer {
                 new PositionableObject(this, e),
                 new PositionableObject(this, e),
         }, this);
-        
+
         e = new Representation();
         e.add(config.get("room:door"), 58, 130, 94, 94, 94, 94, 94, 94, 94, 94);
         r.put(config.get("room:door"), e);
@@ -425,7 +427,7 @@ public class Dungeon implements Observer {
     }
 
     public boolean playerCanAccessPosition(Integer there) {
-        return passable.contains(there) || there == DungeonGoals.nextLocation;
+        return there.equals(getConfigOption("player")) || passable.contains(there) || there == DungeonGoals.nextLocation;
     }
 
     private void updateMessage(boolean press) {
@@ -579,6 +581,8 @@ public class Dungeon implements Observer {
             palette.addAll(ColorNames.XTERM_256_COLORS, false);
         } 
         this.term.setPalette(palette);
+
+        EventDispatcherFactory.get().addObserver(this);
         addRepresentations();
     }
     
