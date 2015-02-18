@@ -40,6 +40,14 @@ public class SnakePlayer implements Moveable, Positionable {
             // Set each position in the party to the last positionable's position
             // so we start at the head, it moves to the desired location. The next char in the party
             // moves to the head's last position, and so on
+
+            /**
+             * newPosition represents what the positionable in the for loop will be going to. We set it by default
+             * to the head party member's position + (x, y) so that the head will move there.
+             *
+             * At the end of the loop, newPosition is set to the current positionable's previous location so that the
+             * next positionable will then move there
+             */
             Positionable newPosition = party[0].getPosition();
             newPosition.setPosition(newPosition.getY() + y, newPosition.getX() + x);
 
