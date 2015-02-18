@@ -19,6 +19,7 @@ import com.cscd.game.event.RecenterMapEvent;
 import com.cscd.game.event.UpdateMessageEvent;
 import com.cscd.game.goals.DungeonGoals;
 import com.cscd.game.ui.Color;
+import com.cscd.game.ui.character.PositionableObject;
 import com.cscd.game.ui.character.Representation;
 import com.cscd.game.ui.character.SnakePlayer;
 import com.googlecode.blacken.bsp.BSPTree;
@@ -98,10 +99,15 @@ public class Dungeon implements Observer {
         e.add(config.get("player"), Color.Yellow.value);
         r.put(config.get("player"), e);
 
-//        e = new Representation();
-//        e.add(config.get("party_1"), Color.Player.value);
-//        r.put(config.get("party_1"), e);
-//
+        // Here, each player representation is added
+        player = new SnakePlayer(new PositionableObject[]{
+                new PositionableObject(this, e),
+                new PositionableObject(this, e),
+                new PositionableObject(this, e),
+                new PositionableObject(this, e),
+                new PositionableObject(this, e),
+        }, this);
+        
         e = new Representation();
         e.add(config.get("room:door"), 58, 130, 94, 94, 94, 94, 94, 94, 94, 94);
         r.put(config.get("room:door"), e);

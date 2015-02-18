@@ -22,9 +22,8 @@ public class SnakePlayer implements Moveable, Positionable {
     }
 
     @Override
-    public void moveBy(int x, int y) {
+    public void moveBy(int y, int x) {
         Integer there;
-        Positionable oldPos = party[0].getPosition();
         Grid<Integer> grid = this.dungeon.getGrid();
         Integer underPlayer = dungeon.getConfigOption("room:floor");
         Positionable player = party[0];
@@ -38,17 +37,21 @@ public class SnakePlayer implements Moveable, Positionable {
         EventDispatcher dispatcher = EventDispatcherFactory.get();
 
         if (dungeon.playerCanAccessPosition(there)) {
-            grid.set(oldPos.getY(), oldPos.getX(), underPlayer);
-
-
             // Set each position in the party to the last positionable's position
             // so we start at the head, it moves to the desired location. The next char in the party
             // moves to the head's last position, and so on
+            Positionable newPosition = party[0].getPosition();
+            newPosition.setPosition(newPosition.getY() + y, newPosition.getX() + x);
 
             for (PositionableObject positionable : party) {
-                positionable.setPosition(positionable.getY() + y, positionable.getX() + x);
+                Positionable oldPos = positionable.getPosition();
+                grid.set(oldPos.getY(), oldPos.getX(), underPlayer);
 
-                grid.set(positionable.getY(), positionable.getX(), positionable.getRepresentation().getPrimaryCodePoint());
+                positionable.setPosition(newPosition);
+
+                grid.set(newPosition.getY(), newPosition.getX(), positionable.getRepresentation().getPrimaryCodePoint());
+
+                newPosition = oldPos;
             }
 
             // Special handling for the head. We're going to center the map around it.
@@ -100,11 +103,11 @@ public class SnakePlayer implements Moveable, Positionable {
 
     @Override
     public void setPosition(int y, int x) {
-        throw new RuntimeException("Not implemented");
+        party[0].setPosition(y, x);
     }
 
     @Override
     public void setPosition(Positionable point) {
-        throw new RuntimeException("Not implemented");
+        setPosition(point.getY(), point.getX());
     }
 }
