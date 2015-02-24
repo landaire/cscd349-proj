@@ -573,7 +573,7 @@ public class Dungeon implements Observer {
     public void init(TerminalInterface term, ColorPalette palette) {
         if (term == null) {
             term = new SwingTerminal();
-            term.init("Blacken Example: Dungeon", 25, 80);
+            term.init("Dungeon", 25, 80);
         }
         this.term = new CursesLikeAPI(term);
         if (palette == null) {
@@ -629,17 +629,18 @@ public class Dungeon implements Observer {
             term.setCurBackground(0);
             term.setCurForeground(7);
             centerOnLine(0, "Dungeon");
-            centerOnLine(1, "A simple demonstration of a dungeon");
-            centerOnLine(3, "Copyright (C) 2010-2012 Steven Black");
-            centerOnLine(5, "An example for the Blacken Roguelike Library.");
+            centerOnLine(1, "A very fun dungeon game");
+            centerOnLine(3, "Originally created by Steven Black (Copyright (C) 2010-2012)");
+            centerOnLine(5, "Modified for CSCD 349 by Lander Brandt, Tony Moua, Sean Burright");
             centerOnLine(6, "Released under the Apache 2.0 License.");
             term.mvputs(8, 0, "HOW TO PLAY");
             term.mvputs(9, 0, "-----------");
-            term.mvputs(10,0, "A representation of a map is shown.  You (the player) are the");
+            term.mvputs(10,0, "A representation of a map is shown.  You and your party are the");
             term.mvputs(11,0, "at sign (@).  The object is to run around collecting the numbers");
             term.mvputs(12,0, "in order.  The numbers have walls around them that only open up");
             term.mvputs(13,0, "if you've collected the previous number.");
-            term.mvputs(15,0, "Use the arrow keys to move around.  There are no opponents.");
+            term.mvputs(15,0, "Use the arrow keys to move around.");
+            term.mvputs(17,0, "You will randomly encounter opponents in halls");
             int last = term.getHeight() - 1;
             term.mvputs(last-1, 0, "Press '?' for Help.");
             alignRight(last-0, "Press any other key to continue.");
