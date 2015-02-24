@@ -12,11 +12,11 @@ import com.googlecode.blacken.grid.Positionable;
 /**
  * Created by Lander Brandt on 2/13/15.
  */
-public class SnakePlayer implements Moveable, Positionable {
+public class Party implements Moveable, Positionable {
     private PositionableObject[] party;
     private Dungeon dungeon;
 
-    public SnakePlayer(PositionableObject[] party, Dungeon dungeon) {
+    public Party(PositionableObject[] party, Dungeon dungeon) {
         this.party = party;
         this.dungeon = dungeon;
     }

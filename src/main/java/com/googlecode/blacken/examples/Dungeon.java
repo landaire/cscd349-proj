@@ -15,7 +15,6 @@
 */
 package com.googlecode.blacken.examples;
 
-import com.cscd.game.event.EventDispatcher;
 import com.cscd.game.event.EventDispatcherFactory;
 import com.cscd.game.event.RecenterMapEvent;
 import com.cscd.game.event.UpdateMessageEvent;
@@ -23,7 +22,7 @@ import com.cscd.game.goals.DungeonGoals;
 import com.cscd.game.ui.Color;
 import com.cscd.game.ui.character.PositionableObject;
 import com.cscd.game.ui.character.Representation;
-import com.cscd.game.ui.character.SnakePlayer;
+import com.cscd.game.ui.character.Party;
 import com.googlecode.blacken.bsp.BSPTree;
 import com.googlecode.blacken.colors.ColorNames;
 import com.googlecode.blacken.colors.ColorPalette;
@@ -58,7 +57,7 @@ public class Dungeon implements Observer {
      * Whether to quit the loop or not
      */
     protected boolean quit;
-    private SnakePlayer player;
+    private Party player;
     private Grid<Integer> grid;
     private Random rand;
     private final static Positionable MAP_START = new Point(1, 0);
@@ -102,7 +101,7 @@ public class Dungeon implements Observer {
         r.put(config.get("player"), e);
 
         // Here, each player representation is added
-        player = new SnakePlayer(new PositionableObject[]{
+        player = new Party(new PositionableObject[]{
                 new PositionableObject(this, e),
                 new PositionableObject(this, e),
                 new PositionableObject(this, e),
