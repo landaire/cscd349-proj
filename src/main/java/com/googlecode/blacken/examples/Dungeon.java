@@ -73,6 +73,7 @@ public class Dungeon implements Observer {
     private Set<Integer> roomWalls;
     private List<Map<Integer, Representation>> representations = new ArrayList<>();
     private int represent = 0;
+    private boolean splashShown = false;
     private String helpMessage =
 "Dungeon Example Commands\n" +
 "============================================================================\n" +
@@ -584,43 +585,14 @@ public class Dungeon implements Observer {
         EventDispatcherFactory.get().addObserver(this);
         addRepresentations();
     }
-    
-    /**
-     * Start the example
-     * 
-     * @param args command-line arguments
-     */
-    public static void main(String[] args) {
-        Dungeon that = new Dungeon();
-        that.init(null, null);
-        that.splash();
-        that.loop();
-        that.quit();
-    }
-    
-    /**
-     * Quit the application.
-     * 
-     * <p>This calls quit on the underlying TerminalInterface.</p>
-     */
-    public void quit() {
-        term.quit();
-    }
 
-    private void centerOnLine(int y, String string) {
-        int offset = term.getWidth() / 2 - string.length() / 2;
-        term.mvputs(y, offset, string);
-    }
 
-    private void alignRight(int y, String string) {
-        int offset = term.getWidth() - string.length();
-        if (term.getHeight() -1 == y) {
-            offset--;
+    public void splash() {
+        if (splashShown) {
+            return;
         }
-        term.mvputs(y, offset, string);
-    }
+        splashShown = true;
 
-    private void splash() {
         boolean ready = false;
         term.disableEventNotices();
         while (!ready) {
@@ -681,6 +653,28 @@ public class Dungeon implements Observer {
                     break;
             }
         }
+    }
+
+    /**
+     * Quit the application.
+     * 
+     * <p>This calls quit on the underlying TerminalInterface.</p>
+     */
+    public void quit() {
+        term.quit();
+    }
+
+    private void centerOnLine(int y, String string) {
+        int offset = term.getWidth() / 2 - string.length() / 2;
+        term.mvputs(y, offset, string);
+    }
+
+    private void alignRight(int y, String string) {
+        int offset = term.getWidth() - string.length();
+        if (term.getHeight() -1 == y) {
+            offset--;
+        }
+        term.mvputs(y, offset, string);
     }
 
     private void showLegalNotices() {
