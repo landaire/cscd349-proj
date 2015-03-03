@@ -1,5 +1,6 @@
 package com.cscd.game.main;
 
+import com.cscd.game.factory.DungeonFactory;
 import com.googlecode.blacken.examples.Dungeon;
 
 /**
@@ -11,7 +12,7 @@ public class Main
 {
  public static void main(String[] args)
  {
-     Dungeon that = new Dungeon();
+     Dungeon that = DungeonFactory.get();
      that.init(null, null);
      that.splash();
      that.loop();

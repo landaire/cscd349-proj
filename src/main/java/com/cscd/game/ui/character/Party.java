@@ -4,6 +4,7 @@ import com.cscd.game.event.EventDispatcher;
 import com.cscd.game.event.EventDispatcherFactory;
 import com.cscd.game.event.RecenterMapEvent;
 import com.cscd.game.event.UpdateMessageEvent;
+import com.cscd.game.factory.DungeonFactory;
 import com.cscd.game.goals.DungeonGoals;
 import com.googlecode.blacken.examples.Dungeon;
 import com.googlecode.blacken.grid.Grid;
@@ -16,9 +17,9 @@ public class Party implements Moveable, Positionable {
     private PositionableObject[] party;
     private Dungeon dungeon;
 
-    public Party(PositionableObject[] party, Dungeon dungeon) {
+    public Party(PositionableObject[] party) {
         this.party = party;
-        this.dungeon = dungeon;
+        this.dungeon = DungeonFactory.get();
     }
 
     @Override

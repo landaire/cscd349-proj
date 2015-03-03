@@ -1,5 +1,6 @@
 package com.cscd.game.ui.character;
 
+import com.cscd.game.factory.DungeonFactory;
 import com.cscd.game.ui.Color;
 import com.googlecode.blacken.examples.Dungeon;
 import com.googlecode.blacken.grid.Grid;
@@ -14,12 +15,10 @@ public class PositionableObject extends Point implements Moveable {
     protected Representation representation;
 
     /**
-     *
-     * @param dungeon the dungeon in which this object will be placed
      * @param representation the visual representation for the object
      */
-    public PositionableObject(Dungeon dungeon, Representation representation) {
-        this.dungeon = dungeon;
+    public PositionableObject(Representation representation) {
+        this.dungeon = DungeonFactory.get();
         this.representation = representation;
     }
 

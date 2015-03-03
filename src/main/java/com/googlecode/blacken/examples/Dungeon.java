@@ -103,12 +103,12 @@ public class Dungeon implements Observer {
 
         // Here, each player representation is added
         player = new Party(new PositionableObject[]{
-                new PositionableObject(this, e),
-                new PositionableObject(this, e),
-                new PositionableObject(this, e),
-                new PositionableObject(this, e),
-                new PositionableObject(this, e),
-        }, this);
+                new PositionableObject(e),
+                new PositionableObject(e),
+                new PositionableObject(e),
+                new PositionableObject(e),
+                new PositionableObject(e),
+        });
 
         e = new Representation();
         e.add(config.get("room:door"), 58, 130, 94, 94, 94, 94, 94, 94, 94, 94);
