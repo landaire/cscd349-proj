@@ -11,7 +11,7 @@ public class Gremlin extends A_ClassPhysicalRogue implements I_IsBad
 {
  public Gremlin()
  {
-  super("Gremlin",100,100,50,100,.75);
+  super("Gremlin",250,100,15,30,.8);
  }
 
  public Gremlin(String name, int HP, int MP, int minDamage, int maxDamage, double chanceToHit)

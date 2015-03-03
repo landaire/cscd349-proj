@@ -11,7 +11,7 @@ public class Skeleton extends A_ClassPhysicalRanger implements I_IsBad
 {
  public Skeleton()
  {
-  super("Skeleton",100,100,50,100,.75);
+  super("Skeleton",220,100,30,50,.8);
  }
  
  public Skeleton(String name, int HP, int MP, int minDamage, int maxDamage, double chanceToHit)
