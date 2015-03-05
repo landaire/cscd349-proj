@@ -7,8 +7,10 @@ package com.cscd.game.model.classes;
  */
 public abstract class A_ClassPhysicalRanger extends A_ClassPhysical
 {
- public A_ClassPhysicalRanger(String name, int HP, int MP, int minDamage, int maxDamage, double chanceToHit)
+ private int _range;
+ public A_ClassPhysicalRanger(String name, int HP, int MP, int minDamage, int maxDamage, double chanceToHit, int range)
  {
   super(name, HP, MP, minDamage, maxDamage, chanceToHit);
+  _range = range;
  }
 }

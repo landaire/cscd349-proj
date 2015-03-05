@@ -7,9 +7,11 @@ package com.cscd.game.model.classes;
  */
 public abstract class A_ClassMagicDamage extends A_ClassMagic
 {
- public A_ClassMagicDamage(String name, int HP, int MP, int minDamage, int maxDamage, double chanceToHit)
+ private int _range;
+ public A_ClassMagicDamage(String name, int HP, int MP, int minDamage, int maxDamage, double chanceToHit, int range)
  {
   super(name, HP, MP, minDamage, maxDamage, chanceToHit);
+  _range = range;
  }
 
  @Override

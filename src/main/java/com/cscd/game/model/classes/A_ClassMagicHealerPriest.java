@@ -7,9 +7,11 @@ package com.cscd.game.model.classes;
  */
 public abstract class A_ClassMagicHealerPriest extends A_ClassMagicHealer
 {
- public A_ClassMagicHealerPriest(String name, int HP, int MP, int minDamage, int maxDamage, double chanceToHit)
+ private int _healAmount;
+ public A_ClassMagicHealerPriest(String name, int HP, int MP, int minDamage, int maxDamage, double chanceToHit, int healAmount)
  {
   super(name, HP, MP, minDamage, maxDamage, chanceToHit);
+  _healAmount = healAmount;
  }
 
  @Override
