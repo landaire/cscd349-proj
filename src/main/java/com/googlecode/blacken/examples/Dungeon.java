@@ -30,6 +30,7 @@ import com.googlecode.blacken.core.Obligations;
 import com.googlecode.blacken.core.Random;
 import com.googlecode.blacken.dungeon.Room;
 import com.googlecode.blacken.dungeon.SimpleDigger;
+import com.googlecode.blacken.examples.Dungeon;
 import com.googlecode.blacken.extras.PerlinNoise;
 import com.googlecode.blacken.grid.Grid;
 import com.googlecode.blacken.grid.Point;
@@ -74,6 +75,7 @@ public class Dungeon implements Observer {
     private List<Map<Integer, Representation>> representations = new ArrayList<>();
     private int represent = 0;
     private boolean splashShown = false;
+    private boolean splashShown2 = false;
     private String helpMessage =
 "Dungeon Example Commands\n" +
 "============================================================================\n" +
@@ -89,6 +91,16 @@ public class Dungeon implements Observer {
 "\n" +
 "? : this help screen\n";
 
+    public static void main(String[] args)
+    {
+   	
+        Dungeon that = new Dungeon();
+        that.init(null, null);
+        that.splash();
+        that.chooseCharacter();
+        that.loop();
+        that.quit();
+    }
     public void addRepresentations() {
         // default
         Representation e;
@@ -395,6 +407,7 @@ public class Dungeon implements Observer {
         int ch = BlackenKeys.NO_KEY;
         int mod;
         updateStatus();
+
         player.moveBy(0,0);
         this.message = "Welcome to Dungeon!";
         term.move(-1, -1);
@@ -736,4 +749,72 @@ public class Dungeon implements Observer {
             recenterMap();
         }
     }
+    
+    public void chooseCharacter()
+    {
+    	if (splashShown2) {
+            return;
+        }
+        splashShown2 = true;
+
+        boolean ready = false;
+        term.disableEventNotices();
+        while (!ready) {
+            term.clear();
+            term.setCurBackground(0);
+            term.setCurForeground(7);
+            centerOnLine(0, "Character Choice");
+
+            term.mvputs(3, 0, "1. Beast");
+            term.mvputs(5, 0, "2. Hospital");
+            term.mvputs(7,0, "3. Hunter");
+            term.mvputs(9,0, "4. Mage");
+            term.mvputs(11,0, "5. Ninja");
+            term.mvputs(13,0, "6. Paladin");
+            term.mvputs(15,0, "7. Warlock");
+            term.mvputs(17,0, "");
+            int last = term.getHeight() - 1;
+            term.mvputs(last-1, 0, "Press '?' for Help.");
+            alignRight(last-0, "Press any other key to continue.");
+            int key = BlackenKeys.NO_KEY;
+            while(key == BlackenKeys.NO_KEY) {
+                // This works around an issue with the AWT putting focus someplace weird
+                // if the window is not in focus when it is shown. It only happens on
+                // startup, so a splash screen is the perfect place to fix it.
+                // A normal game might want an animation at such a spot.
+                key = term.getch(200);
+            }
+            // int modifier = BlackenKeys.NO_KEY;
+            if (BlackenKeys.isModifier(key)) {
+                // modifier = key;
+                key = term.getch(); // should be immediate
+            }
+            switch(key) {
+                case BlackenKeys.NO_KEY:
+                case BlackenKeys.RESIZE_EVENT:
+                    // should be safe
+                    break;
+                case '1':
+                    break;
+                case '2':
+                	break;
+                case '3':
+                    break;
+                case '4':
+                    break;
+                case '5':
+                    break;
+                case '6':
+                    break;
+                case '7':
+                    break;
+                case '?':
+                    showHelp();
+                    break;
+                default:
+                    ready = true;
+                    break;
+            }
+        }
+    }//end choose
 }
