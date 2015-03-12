@@ -14,7 +14,7 @@ public class EventDispatcher extends Observable {
         notify(event);
     }
 
-    private void notify(Object o) {
+    public void notify(Object o) {
         setChanged();
         notifyObservers(o);
     }

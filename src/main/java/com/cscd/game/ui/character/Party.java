@@ -1,9 +1,8 @@
 package com.cscd.game.ui.character;
 
-import com.cscd.game.event.EventDispatcher;
-import com.cscd.game.event.EventDispatcherFactory;
-import com.cscd.game.event.RecenterMapEvent;
-import com.cscd.game.event.UpdateMessageEvent;
+import com.cscd.game.event.*;
+import com.cscd.game.factory.ConfigFactory;
+import com.cscd.game.factory.DungeonFactory;
 import com.cscd.game.goals.DungeonGoals;
 import com.googlecode.blacken.examples.Dungeon;
 import com.googlecode.blacken.grid.Grid;
@@ -16,16 +15,16 @@ public class Party implements Moveable, Positionable {
     private PositionableObject[] party;
     private Dungeon dungeon;
 
-    public Party(PositionableObject[] party, Dungeon dungeon) {
+    public Party(PositionableObject[] party) {
         this.party = party;
-        this.dungeon = dungeon;
+        this.dungeon = DungeonFactory.get();
     }
 
     @Override
     public void moveBy(int y, int x) {
         Integer there;
         Grid<Integer> grid = this.dungeon.getGrid();
-        Integer underPlayer = dungeon.getConfigOption("room:floor");
+        Integer underPlayer = ConfigFactory.get("room:floor");
         Positionable player = party[0];
 
         try {
@@ -79,6 +78,8 @@ public class Party implements Moveable, Positionable {
                 // Notify the dungeon to update the message
                 dispatcher.updateMessage(new UpdateMessageEvent(buf.toString(), true, false));
             }
+
+            dispatcher.notify(new PartyMoveEvent(this));
         } else if (there >= '0' && there <= '9') {
             dispatcher.updateMessage(new UpdateMessageEvent("That position is still locked.", false, false));
         }
