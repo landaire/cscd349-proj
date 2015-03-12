@@ -18,11 +18,12 @@ package com.googlecode.blacken.examples;
 import com.cscd.game.event.EventDispatcherFactory;
 import com.cscd.game.event.RecenterMapEvent;
 import com.cscd.game.event.UpdateMessageEvent;
+import com.cscd.game.factory.ConfigFactory;
 import com.cscd.game.goals.DungeonGoals;
+import com.cscd.game.model.characters.bad.Ogre;
 import com.cscd.game.ui.Color;
-import com.cscd.game.ui.character.PositionableObject;
-import com.cscd.game.ui.character.Representation;
-import com.cscd.game.ui.character.Party;
+import com.cscd.game.ui.builder.CharacterBuilder;
+import com.cscd.game.ui.character.*;
 import com.googlecode.blacken.bsp.BSPTree;
 import com.googlecode.blacken.colors.ColorNames;
 import com.googlecode.blacken.colors.ColorPalette;
@@ -39,6 +40,7 @@ import com.googlecode.blacken.terminal.*;
 
 import java.util.*;
 
+import jdk.nashorn.internal.runtime.regexp.joni.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,9 +70,7 @@ public class Dungeon implements Observer {
     private boolean dirtyStatus = false;
     private String message;
     private float noisePlane;
-    private Map<String, Integer> config;
     private Set<Integer> passable;
-    private Set<Integer> roomWalls;
     private List<Map<Integer, Representation>> representations = new ArrayList<>();
     private int represent = 0;
     private boolean splashShown = false;
@@ -90,6 +90,19 @@ public class Dungeon implements Observer {
 "? : this help screen\n";
 
     public void addRepresentations() {
+
+        // Initialize the room walls
+        Set<Integer> roomWalls = new HashSet<>();
+        // roomWalls.add(ConfigFactory.get("room:wall"));
+        roomWalls.add(ConfigFactory.get("room:wall:top"));
+        roomWalls.add(ConfigFactory.get("room:wall:left"));
+        roomWalls.add(ConfigFactory.get("room:wall:bottom"));
+        roomWalls.add(ConfigFactory.get("room:wall:right"));
+        roomWalls.add(ConfigFactory.get("room:wall:top-left"));
+        roomWalls.add(ConfigFactory.get("room:wall:top-right"));
+        roomWalls.add(ConfigFactory.get("room:wall:bottom-left"));
+        roomWalls.add(ConfigFactory.get("room:wall:bottom-right"));
+
         // default
         Representation e;
         Map<Integer, Representation> r;
@@ -98,8 +111,8 @@ public class Dungeon implements Observer {
         representations.add(r);
 
         e = new Representation();
-        e.add(config.get("player"), Color.Yellow.value);
-        r.put(config.get("player"), e);
+        e.add(ConfigFactory.get("player"), Color.Yellow.value);
+        r.put(ConfigFactory.get("player"), e);
 
         // Here, each player representation is added
         player = new Party(new PositionableObject[]{
@@ -111,24 +124,24 @@ public class Dungeon implements Observer {
         });
 
         e = new Representation();
-        e.add(config.get("room:door"), 58, 130, 94, 94, 94, 94, 94, 94, 94, 94);
-        r.put(config.get("room:door"), e);
+        e.add(ConfigFactory.get("room:door"), 58, 130, 94, 94, 94, 94, 94, 94, 94, 94);
+        r.put(ConfigFactory.get("room:door"), e);
 
         e = new Representation();
-        e.add(config.get("floor"), 0xee, 10);
-        r.put(config.get("floor"), e);
+        e.add(ConfigFactory.get("floor"), 0xee, 10);
+        r.put(ConfigFactory.get("floor"), e);
 
         e = new Representation();
-        e.add(config.get("hall:floor"), 0xee, 10);
-        r.put(config.get("hall:floor"), e);
+        e.add(ConfigFactory.get("hall:floor"), 0xee, 10);
+        r.put(ConfigFactory.get("hall:floor"), e);
 
         e = new Representation();
-        e.add(config.get("diggable"), 0x58, 14);
-        r.put(config.get("diggable"), e);
+        e.add(ConfigFactory.get("diggable"), 0x58, 14);
+        r.put(ConfigFactory.get("diggable"), e);
 
         e = new Representation();
-        e.add(config.get("hall:wall"), 0x58, 14);
-        r.put(config.get("hall:wall"), e);
+        e.add(ConfigFactory.get("hall:wall"), 0x58, 14);
+        r.put(ConfigFactory.get("hall:wall"), e);
 
         for (Integer roomWall : roomWalls) {
             e = new Representation();
@@ -137,62 +150,62 @@ public class Dungeon implements Observer {
         }
 
         e = new Representation();
-        e.add(config.get("water"), 17, 11);
-        e.add(config.get("mountains"), 236, 20);
-        e.add(config.get("water"), 17, 11);
-        e.add(config.get("water"), 17, 11);
-        e.add(config.get("water"), 17, 11);
-        e.add(config.get("mountains"), 236, 20);
-        r.put(config.get("void"), e);
+        e.add(ConfigFactory.get("water"), 17, 11);
+        e.add(ConfigFactory.get("mountains"), 236, 20);
+        e.add(ConfigFactory.get("water"), 17, 11);
+        e.add(ConfigFactory.get("water"), 17, 11);
+        e.add(ConfigFactory.get("water"), 17, 11);
+        e.add(ConfigFactory.get("mountains"), 236, 20);
+        r.put(ConfigFactory.get("void"), e);
 
-        for (char goal='0'; goal <= '9'; goal++) {
+        for (char goal = '0'; goal <= '9'; goal++) {
             Integer g = new Integer(goal);
             e = new Representation();
             e.add(g, 0x4 + g - '0');
             r.put(g, e);
         }
-        
+
         // nethack
 
         r = new HashMap<>();
         representations.add(r);
         e = new Representation();
         e.add("@".codePointAt(0), 7);
-        r.put(config.get("player"), e);
+        r.put(ConfigFactory.get("player"), e);
 
         e = new Representation();
         e.add("+".codePointAt(0), 7);
-        r.put(config.get("room:door"), e);
+        r.put(ConfigFactory.get("room:door"), e);
 
         e = new Representation();
         e.add(".".codePointAt(0), 7);
-        r.put(config.get("floor"), e);
+        r.put(ConfigFactory.get("floor"), e);
 
         e = new Representation();
         e.add("#".codePointAt(0), 7);
-        r.put(config.get("hall:floor"), e);
+        r.put(ConfigFactory.get("hall:floor"), e);
 
         e = new Representation();
         e.add(" ".codePointAt(0), 0);
-        r.put(config.get("diggable"), e);
+        r.put(ConfigFactory.get("diggable"), e);
 
         e = new Representation();
         e.add(" ".codePointAt(0), 0);
-        r.put(config.get("hall:wall"), e);
+        r.put(ConfigFactory.get("hall:wall"), e);
 
         e = new Representation();
         e.add("-".codePointAt(0), 7);
-        r.put(config.get("room:wall:top"), e);
-        r.put(config.get("room:wall:bottom"), e);
-        r.put(config.get("room:wall:top-left"), e);
-        r.put(config.get("room:wall:top-right"), e);
-        r.put(config.get("room:wall:bottom-left"), e);
-        r.put(config.get("room:wall:bottom-right"), e);
+        r.put(ConfigFactory.get("room:wall:top"), e);
+        r.put(ConfigFactory.get("room:wall:bottom"), e);
+        r.put(ConfigFactory.get("room:wall:top-left"), e);
+        r.put(ConfigFactory.get("room:wall:top-right"), e);
+        r.put(ConfigFactory.get("room:wall:bottom-left"), e);
+        r.put(ConfigFactory.get("room:wall:bottom-right"), e);
 
         e = new Representation();
         e.add("|".codePointAt(0), 7);
-        r.put(config.get("room:wall:left"), e);
-        r.put(config.get("room:wall:right"), e);
+        r.put(ConfigFactory.get("room:wall:left"), e);
+        r.put(ConfigFactory.get("room:wall:right"), e);
 
         for (Integer roomWall : roomWalls) {
             if (!r.containsKey(roomWall)) {
@@ -204,9 +217,9 @@ public class Dungeon implements Observer {
 
         e = new Representation();
         e.add(" ".codePointAt(0), 0);
-        r.put(config.get("void"), e);
+        r.put(ConfigFactory.get("void"), e);
 
-        for (char goal='0'; goal <= '9'; goal++) {
+        for (char goal = '0'; goal <= '9'; goal++) {
             Integer g = new Integer(goal);
             e = new Representation();
             e.add(g, 0x4 + g - '0');
@@ -219,30 +232,30 @@ public class Dungeon implements Observer {
         representations.add(r);
 
         e = new Representation();
-        e.add((int)'@', 0xe4);
-        r.put(config.get("player"), e);
+        e.add((int) '@', Color.Yellow.value);
+        r.put(ConfigFactory.get("player"), e);
 
         e = new Representation();
-        e.add((int)'+', 58, 130, 94, 94, 94, 94, 94, 94, 94, 94);
-        e.add((int)'+', 58, 130, 94, 94, 94, 94, 94, 94, 94, 94);
-        e.add((int)'\'', 58, 130, 94, 94, 94, 94, 94, 94, 94, 94);
-        r.put(config.get("room:door"), e);
+        e.add((int) '+', 58, 130, 94, 94, 94, 94, 94, 94, 94, 94);
+        e.add((int) '+', 58, 130, 94, 94, 94, 94, 94, 94, 94, 94);
+        e.add((int) '\'', 58, 130, 94, 94, 94, 94, 94, 94, 94, 94);
+        r.put(ConfigFactory.get("room:door"), e);
 
         e = new Representation();
-        e.add((int)'.', 0xee, 10);
-        r.put(config.get("floor"), e);
+        e.add((int) '.', 0xee, 10);
+        r.put(ConfigFactory.get("floor"), e);
 
-        r.put(config.get("hall:floor"), e);
+        r.put(ConfigFactory.get("hall:floor"), e);
 
         e = new Representation();
         e.add(BlackenCodePoints.CODEPOINT_MEDIUM_SHADE, 0x58, 14);
         e.add(BlackenCodePoints.CODEPOINT_LIGHT_SHADE, 0x58, 14);
         e.add(BlackenCodePoints.CODEPOINT_MEDIUM_SHADE, 0x58, 14);
         e.add(BlackenCodePoints.CODEPOINT_MEDIUM_SHADE, 0x58, 14);
-        r.put(config.get("diggable"), e);
+        r.put(ConfigFactory.get("diggable"), e);
 
-        e = r.get(config.get("diggable"));
-        r.put(config.get("hall:wall"), e);
+        e = r.get(ConfigFactory.get("diggable"));
+        r.put(ConfigFactory.get("hall:wall"), e);
 
         for (Integer roomWall : roomWalls) {
             e = new Representation();
@@ -252,15 +265,14 @@ public class Dungeon implements Observer {
 
         e = new Representation();
         e.add(" ".codePointAt(0), 0);
-        r.put(config.get("void"), e);
+        r.put(ConfigFactory.get("void"), e);
 
-        for (char goal='0'; goal <= '9'; goal++) {
+        for (char goal = '0'; goal <= '9'; goal++) {
             Integer g = new Integer(goal);
             e = new Representation();
             e.add(g, 0x4 + g - '0');
             r.put(g, e);
         }
-
     }
 
     /**
@@ -269,55 +281,16 @@ public class Dungeon implements Observer {
     public Dungeon() {
         rand = new Random();
         noisePlane = rand.nextFloat();
-        config = new HashMap<>();
-        // Used by Simple Digger
-        // Courier New doesn't have Heavy, but does have Double.
-        config.put("diggable", "\u2592".codePointAt(0)); // 50% shade
-        config.put("floor", "\u25AA".codePointAt(0)); // small black square
-        config.put("hall:floor", "\u25AB".codePointAt(0)); // sm. white square
-        config.put("hall:wall", "\u2591".codePointAt(0)); // 25% shade
-        config.put("room:door", "+".codePointAt(0));
-        config.put("room:wall:top", "\u2500".codePointAt(0)); // light horiz
-        config.put("room:wall:left", "\u2502".codePointAt(0)); // light vert
-        config.put("room:wall:bottom", "\u2550".codePointAt(0)); // heavy horiz
-        config.put("room:wall:right", "\u2551".codePointAt(0)); // heavy horiz
-        config.put("room:wall:top-left", "\u250C".codePointAt(0)); // Lh/Lv
-        config.put("room:wall:top-right", "\u2556".codePointAt(0)); // Lh/Hv
-        config.put("room:wall:bottom-left", "\u2558".codePointAt(0)); // Hh/Lv
-        config.put("room:wall:bottom-right", "\u255D".codePointAt(0)); // Hv/Hh
-        
-        // game specific
-        config.put("void", " ".codePointAt(0));
-        config.put("player", "@".codePointAt(0));
-        config.put("party_1", "!".codePointAt(0));
-        config.put("water", "~".codePointAt(0));
-        config.put("mountains", "^".codePointAt(0));
 
-        grid = new Grid<>(config.get("diggable"), 100, 100);
+        grid = new Grid<>(ConfigFactory.get("diggable"), 100, 100);
         passable = new HashSet<>();
-        passable.add(config.get("floor"));
-        passable.add(config.get("hall:floor"));
-        passable.add(config.get("room:door"));
-
-        roomWalls = new HashSet<>();
-        // roomWalls.add(config.get("room:wall"));
-        roomWalls.add(config.get("room:wall:top"));
-        roomWalls.add(config.get("room:wall:left"));
-        roomWalls.add(config.get("room:wall:bottom"));
-        roomWalls.add(config.get("room:wall:right"));
-        roomWalls.add(config.get("room:wall:top-left"));
-        roomWalls.add(config.get("room:wall:top-right"));
-        roomWalls.add(config.get("room:wall:bottom-left"));
-        roomWalls.add(config.get("room:wall:bottom-right"));
-
+        passable.add(ConfigFactory.get("floor"));
+        passable.add(ConfigFactory.get("hall:floor"));
+        passable.add(ConfigFactory.get("room:door"));
     }
 
     public Grid<Integer> getGrid() {
         return this.grid;
-    }
-
-    public Integer getConfigOption(String key) {
-        return config.get(key);
     }
 
     /**
@@ -326,7 +299,7 @@ public class Dungeon implements Observer {
     private void makeMap() {
         grid.clear();
         SimpleDigger simpleDigger = new SimpleDigger();
-        BSPTree<Room> bsp = simpleDigger.setup(grid, config);
+        BSPTree<Room> bsp = simpleDigger.setup(grid, ConfigFactory.getConfig());
         List<Room> rooms = new ArrayList(bsp.findContained(null));
         Collections.shuffle(rooms, rand);
         DungeonGoals.nextLocation = 0x31;
@@ -340,10 +313,11 @@ public class Dungeon implements Observer {
             }
         }
         // simpleDigger.digRoomAvoidanceHalls(bsp, grid, config);
-        simpleDigger.digHallFirst(bsp, grid, config, false);
-        underPlayer = config.get("room:floor");
-        Positionable pos = rooms.get(idx).placeThing(grid, underPlayer, config.get("player"));
+        simpleDigger.digHallFirst(bsp, grid, ConfigFactory.getConfig(), false);
+        underPlayer = ConfigFactory.get("room:floor");
+        Positionable pos = rooms.get(idx).placeThing(grid, underPlayer, ConfigFactory.get("player"));
         this.player.setPosition(pos);
+
         recenterMap();
     }
 
@@ -361,7 +335,7 @@ public class Dungeon implements Observer {
             for (int x = MAP_START.getX(); x < ex; x++) {
                 int y1 = y + upperLeft.getY() - MAP_START.getY();
                 int x1 = x + upperLeft.getX() - MAP_START.getX();
-                int what = config.get("void");
+                int what = ConfigFactory.get("void");
                 if (y1 >= 0 && x1 >= 0 && y1 < grid.getHeight() && x1 < grid.getWidth()) {
                     what = grid.get(y1, x1);
                 }
@@ -395,7 +369,7 @@ public class Dungeon implements Observer {
         int ch = BlackenKeys.NO_KEY;
         int mod;
         updateStatus();
-        player.moveBy(0,0);
+        player.moveBy(0, 0);
         this.message = "Welcome to Dungeon!";
         term.move(-1, -1);
         while (!quit) {
@@ -427,7 +401,7 @@ public class Dungeon implements Observer {
     }
 
     public boolean playerCanAccessPosition(Integer there) {
-        return there.equals(getConfigOption("player")) || passable.contains(there) || there == DungeonGoals.nextLocation;
+        return there.equals(ConfigFactory.get("player")) || passable.contains(there) || there == DungeonGoals.nextLocation;
     }
 
     private void updateMessage(boolean press) {

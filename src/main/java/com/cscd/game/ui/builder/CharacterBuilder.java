@@ -3,9 +3,8 @@ package com.cscd.game.ui.builder;
 import com.cscd.game.model.characters.bad.Ogre;
 import com.cscd.game.ui.Color;
 import com.cscd.game.ui.character.Enemy;
-import com.cscd.game.ui.character.Moveable;
+import com.cscd.game.ui.character.PositionableObject;
 import com.cscd.game.ui.character.Representation;
-import com.googlecode.blacken.examples.Dungeon;
 
 import java.util.HashMap;
 
@@ -16,7 +15,7 @@ public class CharacterBuilder {
     private static HashMap<String, Representation> representations = new HashMap<>();
     private static boolean representationsSet = false;
 
-    public static Moveable build(String name) {
+    public static PositionableObject build(String name) {
         if (!representationsSet) {
             initializeRepresentations();
             representationsSet = true;
@@ -32,9 +31,9 @@ public class CharacterBuilder {
 
     private static void initializeRepresentations() {
         Representation r = new Representation();
-
         // Ogre
         r.add((int)'O', Color.Red.value);
+
         representations.put(Ogre.name, r);
     }
 }

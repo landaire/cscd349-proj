@@ -1,5 +1,6 @@
 package com.cscd.game.ui.character;
 
+import com.cscd.game.factory.ConfigFactory;
 import com.cscd.game.factory.DungeonFactory;
 import com.cscd.game.ui.Color;
 import com.googlecode.blacken.examples.Dungeon;
@@ -10,7 +11,7 @@ import com.googlecode.blacken.grid.Positionable;
 /**
  * Created by Lander Brandt on 2/13/15.
  */
-public class PositionableObject extends Point implements Moveable {
+public class PositionableObject extends Point implements Moveable, Positionable {
     protected Dungeon dungeon;
     protected Representation representation;
 
@@ -39,7 +40,7 @@ public class PositionableObject extends Point implements Moveable {
             return;
         }
 
-        grid.set(oldPos.getX(), oldPos.getY(), dungeon.getConfigOption("room:floor"));
+        grid.set(oldPos.getX(), oldPos.getY(), ConfigFactory.get("room:floor"));
     }
 
     public Representation getRepresentation() {
