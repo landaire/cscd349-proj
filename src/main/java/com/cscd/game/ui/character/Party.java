@@ -4,9 +4,13 @@ import com.cscd.game.event.*;
 import com.cscd.game.factory.ConfigFactory;
 import com.cscd.game.factory.DungeonFactory;
 import com.cscd.game.goals.DungeonGoals;
+import com.cscd.game.model.characters.good.I_IsGood;
 import com.googlecode.blacken.examples.Dungeon;
 import com.googlecode.blacken.grid.Grid;
 import com.googlecode.blacken.grid.Positionable;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by Lander Brandt on 2/13/15.
@@ -14,10 +18,12 @@ import com.googlecode.blacken.grid.Positionable;
 public class Party implements Moveable, Positionable {
     private PositionableObject[] party;
     private Dungeon dungeon;
+    private ArrayList<I_IsGood> characters;
 
     public Party(PositionableObject[] party) {
         this.party = party;
         this.dungeon = DungeonFactory.get();
+        this.characters = new ArrayList<>();
     }
 
     @Override
@@ -118,5 +124,36 @@ public class Party implements Moveable, Positionable {
     @Override
     public void setPosition(Positionable point) {
         setPosition(point.getY(), point.getX());
+    }
+
+    public I_IsGood[] getCharacters() {
+        return this.characters.toArray(new I_IsGood[this.characters.size()]);
+    }
+
+    public void setCharacters(I_IsGood[] characters) {
+        this.characters = new ArrayList<I_IsGood>(Arrays.asList(characters));
+    }
+
+    public void addCharacter(I_IsGood character) {
+        if (this.characters.size() >= this.party.length) {
+            throw new RuntimeException("Too many characters for the given party");
+        }
+
+        this.characters.add(character);
+    }
+
+    /**
+     * Removes the provided character AND a representation from the party
+     * @param character character to remove
+     */
+    public void removeCharacter(I_IsGood character) {
+        if (this.characters.contains(character)) {
+            this.characters.remove(character);
+            PositionableObject[] newParty = new PositionableObject[this.party.length - 1];
+            System.arraycopy(this.party, 0, newParty, 0, newParty.length);
+            this.party = newParty;
+        } else {
+            throw new RuntimeException("Character does not exist");
+        }
     }
 }
