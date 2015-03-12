@@ -19,6 +19,7 @@ public class Main
         Dungeon that = DungeonFactory.get();
         that.init(null, null);
         that.splash();
+        that.chooseCharacter();
         that.loop();
         that.quit();
     }
