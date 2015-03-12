@@ -4,7 +4,7 @@ import com.cscd.game.event.*;
 import com.cscd.game.factory.ConfigFactory;
 import com.cscd.game.factory.DungeonFactory;
 import com.cscd.game.goals.DungeonGoals;
-import com.cscd.game.model.characters.good.I_IsGood;
+import com.cscd.game.model.classes.A_Class;
 import com.googlecode.blacken.examples.Dungeon;
 import com.googlecode.blacken.grid.Grid;
 import com.googlecode.blacken.grid.Positionable;
@@ -18,7 +18,7 @@ import java.util.Arrays;
 public class Party implements Moveable, Positionable {
     private PositionableObject[] party;
     private Dungeon dungeon;
-    private ArrayList<I_IsGood> characters;
+    private ArrayList<A_Class> characters;
 
     public Party(PositionableObject[] party) {
         this.party = party;
@@ -126,15 +126,15 @@ public class Party implements Moveable, Positionable {
         setPosition(point.getY(), point.getX());
     }
 
-    public I_IsGood[] getCharacters() {
-        return this.characters.toArray(new I_IsGood[this.characters.size()]);
+    public A_Class[] getCharacters() {
+        return this.characters.toArray(new A_Class[this.characters.size()]);
     }
 
-    public void setCharacters(I_IsGood[] characters) {
-        this.characters = new ArrayList<I_IsGood>(Arrays.asList(characters));
+    public void setCharacters(A_Class[] characters) {
+        this.characters = new ArrayList<A_Class>(Arrays.asList(characters));
     }
 
-    public void addCharacter(I_IsGood character) {
+    public void addCharacter(A_Class character) {
         if (this.characters.size() >= this.party.length) {
             throw new RuntimeException("Too many characters for the given party");
         }
@@ -146,7 +146,7 @@ public class Party implements Moveable, Positionable {
      * Removes the provided character AND a representation from the party
      * @param character character to remove
      */
-    public void removeCharacter(I_IsGood character) {
+    public void removeCharacter(A_Class character) {
         if (this.characters.contains(character)) {
             this.characters.remove(character);
             PositionableObject[] newParty = new PositionableObject[this.party.length - 1];

@@ -21,6 +21,10 @@ import com.cscd.game.event.UpdateMessageEvent;
 import com.cscd.game.factory.ConfigFactory;
 import com.cscd.game.goals.DungeonGoals;
 import com.cscd.game.model.characters.bad.Ogre;
+import com.cscd.game.model.characters.good.Beast;
+import com.cscd.game.model.characters.good.Hospital;
+import com.cscd.game.model.characters.good.I_IsGood;
+import com.cscd.game.model.classes.A_Class;
 import com.cscd.game.ui.Color;
 import com.cscd.game.ui.builder.CharacterBuilder;
 import com.cscd.game.ui.character.*;
@@ -39,6 +43,7 @@ import com.googlecode.blacken.grid.Positionable;
 import com.googlecode.blacken.swing.SwingTerminal;
 import com.googlecode.blacken.terminal.*;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 import jdk.nashorn.internal.runtime.regexp.joni.Config;
@@ -722,11 +727,14 @@ public class Dungeon implements Observer {
 
         boolean ready = false;
         term.disableEventNotices();
+
+        ArrayList<A_Class> chosenCharacters = new ArrayList<>(6);
+        String chosenCharacterNames = "";
         while (!ready) {
             term.clear();
             term.setCurBackground(0);
             term.setCurForeground(7);
-            centerOnLine(0, "Character Choice");
+            centerOnLine(0, "Choose ");
 
             term.mvputs(3, 0, "1. Beast");
             term.mvputs(5, 0, "2. Hospital");
@@ -735,7 +743,7 @@ public class Dungeon implements Observer {
             term.mvputs(11,0, "5. Ninja");
             term.mvputs(13,0, "6. Paladin");
             term.mvputs(15,0, "7. Warlock");
-            term.mvputs(17,0, "");
+            term.mvputs(17,0, "Chosen characters: " + chosenCharacterNames);
             int last = term.getHeight() - 1;
             term.mvputs(last-1, 0, "Press '?' for Help.");
             alignRight(last-0, "Press any other key to continue.");
@@ -758,8 +766,12 @@ public class Dungeon implements Observer {
                     // should be safe
                     break;
                 case '1':
+                    chosenCharacters.add(new Beast());
+                    chosenCharacterNames += "Beast, ";
                     break;
                 case '2':
+                    chosenCharacters.add(new Hospital());
+                    chosenCharacterNames += "Hospital, ";
                 	break;
                 case '3':
                     break;
