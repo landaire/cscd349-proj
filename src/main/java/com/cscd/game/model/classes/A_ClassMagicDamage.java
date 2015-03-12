@@ -1,5 +1,7 @@
 package com.cscd.game.model.classes;
 
+import com.cscd.game.model.characters.good.Inventory;
+
 /**
  * Sean Burright
  * Lander Brandt
@@ -8,14 +10,14 @@ package com.cscd.game.model.classes;
 public abstract class A_ClassMagicDamage extends A_ClassMagic
 {
  private int _range;
- public A_ClassMagicDamage(String name, int HP, int MP, int minDamage, int maxDamage, double chanceToHit, int range)
+ public A_ClassMagicDamage(Inventory inventory, String name, int HP, int MP, int minDamage, int maxDamage, double chanceToHit, int range)
  {
-  super(name, HP, MP, minDamage, maxDamage, chanceToHit);
+  super(inventory, name, HP, MP, minDamage, maxDamage, chanceToHit);
   _range = range;
  }
 
  @Override
- public int attack()
+ public int attack(A_Class enemy)
  {
   return 0;
  }
