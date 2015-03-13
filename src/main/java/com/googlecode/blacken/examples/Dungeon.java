@@ -1,4 +1,4 @@
-/* blacken - a library for Roguelike games
+﻿/* blacken - a library for Roguelike games
  * Copyright © 2012 Steven Black <yam655@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -724,7 +724,7 @@ public class Dungeon implements Observer {
             return;
         }
         splashShown2 = true;
-
+        int characterCount = 0;
         boolean ready = false;
         term.disableEventNotices();
 
@@ -746,7 +746,13 @@ public class Dungeon implements Observer {
             term.mvputs(17,0, "Chosen characters: " + chosenCharacterNames);
             int last = term.getHeight() - 1;
             term.mvputs(last-1, 0, "Press '?' for Help.");
-            alignRight(last-0, "Press any other key to continue.");
+            if(characterCount >= 2)
+            {
+            	alignRight(last-0, "Press any other key to continue.");
+            	
+            	//need a way to disable Enter key until they have 2 or more in the party
+            }
+            //alignRight(last-0, "Press any other key to continue.");
             int key = BlackenKeys.NO_KEY;
             while(key == BlackenKeys.NO_KEY) {
                 // This works around an issue with the AWT putting focus someplace weird
@@ -768,20 +774,37 @@ public class Dungeon implements Observer {
                 case '1':
                     chosenCharacters.add(new Beast());
                     chosenCharacterNames += "Beast, ";
+                    characterCount = characterCount+1;
                     break;
                 case '2':
                     chosenCharacters.add(new Hospital());
                     chosenCharacterNames += "Hospital, ";
+                    characterCount = characterCount+1;
                 	break;
                 case '3':
+                	chosenCharacters.add(new Hunter());
+                    chosenCharacterNames += "Hunter, ";
+                    characterCount = characterCount+1;
                     break;
                 case '4':
+                	chosenCharacters.add(new Mage());
+                    chosenCharacterNames += "Mage, ";
+                    characterCount = characterCount+1;
                     break;
                 case '5':
+                	chosenCharacters.add(new Ninja());
+                    chosenCharacterNames += "Ninja, ";
+                    characterCount = characterCount+1;
                     break;
                 case '6':
+                	chosenCharacters.add(new Paladin());
+                    chosenCharacterNames += "Paladin, ";
+                    characterCount = characterCount+1;
                     break;
                 case '7':
+                	chosenCharacters.add(new Warlock());
+                    chosenCharacterNames += "Warlock, ";
+                    characterCount = characterCount+1;
                     break;
                 case '?':
                     showHelp();
