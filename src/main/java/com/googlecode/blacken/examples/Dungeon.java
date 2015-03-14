@@ -20,7 +20,6 @@ import com.cscd.game.event.RecenterMapEvent;
 import com.cscd.game.event.UpdateMessageEvent;
 import com.cscd.game.factory.ConfigFactory;
 import com.cscd.game.goals.DungeonGoals;
-import com.cscd.game.model.characters.bad.Ogre;
 import com.cscd.game.model.characters.builder.CharacterBuilder;
 import com.cscd.game.model.characters.good.*;
 import com.cscd.game.model.classes.A_Class;
@@ -33,7 +32,6 @@ import com.googlecode.blacken.core.Obligations;
 import com.googlecode.blacken.core.Random;
 import com.googlecode.blacken.dungeon.Room;
 import com.googlecode.blacken.dungeon.SimpleDigger;
-import com.googlecode.blacken.examples.Dungeon;
 import com.googlecode.blacken.extras.PerlinNoise;
 import com.googlecode.blacken.grid.Grid;
 import com.googlecode.blacken.grid.Point;
@@ -41,10 +39,8 @@ import com.googlecode.blacken.grid.Positionable;
 import com.googlecode.blacken.swing.SwingTerminal;
 import com.googlecode.blacken.terminal.*;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
-import jdk.nashorn.internal.runtime.regexp.joni.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,7 +74,7 @@ public class Dungeon implements Observer {
     private List<Map<Integer, Representation>> representations = new ArrayList<>();
     private int represent = 0;
     private boolean splashShown = false;
-    private boolean splashShown2 = false;
+    private boolean partySelectionShown = false;
     private String helpMessage =
 "Dungeon Example Commands\n" +
 "============================================================================\n" +
@@ -119,14 +115,8 @@ public class Dungeon implements Observer {
         e.add(ConfigFactory.get("player"), Color.Yellow.value);
         r.put(ConfigFactory.get("player"), e);
 
-        // Here, each player representation is added
-        player = new Party(new PositionableObject[]{
-                new PositionableObject(e),
-                new PositionableObject(e),
-                new PositionableObject(e),
-                new PositionableObject(e),
-                new PositionableObject(e),
-        });
+        // Initialize the party with a base representation.
+        player = new Party(e);
 
         e = new Representation();
         e.add(ConfigFactory.get("room:door"), 58, 130, 94, 94, 94, 94, 94, 94, 94, 94);
@@ -369,6 +359,8 @@ public class Dungeon implements Observer {
      * @return the quit status
      */
     public boolean loop() {
+        chooseParty();
+
         makeMap();
         term.disableEventNotices();
         int ch = BlackenKeys.NO_KEY;
@@ -716,14 +708,14 @@ public class Dungeon implements Observer {
         }
     }
     
-    public void chooseCharacter()
+    public void chooseParty()
     {
-    	if (splashShown2) {
+    	if (partySelectionShown) {
             return;
         }
-        splashShown2 = true;
+        partySelectionShown = true;
+
         int characterCount = 0;
-        boolean ready = false;
         term.disableEventNotices();
 
         ArrayList<A_Class> chosenCharacters = new ArrayList<>();
@@ -812,5 +804,7 @@ public class Dungeon implements Observer {
 
             error = "Invalid input";
         }
+
+        this.player.setCharacters(chosenCharacters.toArray(new A_Class[chosenCharacters.size()]));
     }//end choose
 }

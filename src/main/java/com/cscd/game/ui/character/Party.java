@@ -16,14 +16,26 @@ import java.util.Arrays;
  * Created by Lander Brandt on 2/13/15.
  */
 public class Party implements Moveable, Positionable {
-    private PositionableObject[] party;
+    private ArrayList<PositionableObject> party;
     private Dungeon dungeon;
     private ArrayList<A_Class> characters;
+    private Representation baseRepresentation;
 
     public Party(PositionableObject[] party) {
-        this.party = party;
+        this(party[0].getRepresentation());
+
+        this.party = new ArrayList<>(Arrays.asList(party));
+    }
+
+    /**
+     * @param baseRepresentation represenation that will be used when characters are added
+     */
+    public Party(Representation baseRepresentation) {
+        this.baseRepresentation = baseRepresentation;
+
         this.dungeon = DungeonFactory.get();
         this.characters = new ArrayList<>();
+        party = new ArrayList<>();
     }
 
     @Override
@@ -31,7 +43,7 @@ public class Party implements Moveable, Positionable {
         Integer there;
         Grid<Integer> grid = this.dungeon.getGrid();
         Integer underPlayer = ConfigFactory.get("room:floor");
-        Positionable player = party[0];
+        Positionable player = headPartyMember();
 
         try {
             there = grid.get(player.getY() + y, player.getX() + x);
@@ -53,7 +65,7 @@ public class Party implements Moveable, Positionable {
              * At the end of the loop, newPosition is set to the current positionable's previous location so that the
              * next positionable will then move there
              */
-            Positionable newPosition = party[0].getPosition();
+            Positionable newPosition = headPartyMember().getPosition();
             newPosition.setPosition(newPosition.getY() + y, newPosition.getX() + x);
 
             for (PositionableObject positionable : party) {
@@ -93,17 +105,17 @@ public class Party implements Moveable, Positionable {
 
     @Override
     public int getX() {
-        return party[0].getX();
+        return headPartyMember().getX();
     }
 
     @Override
     public int getY() {
-        return party[0].getY();
+        return headPartyMember().getY();
     }
 
     @Override
     public Positionable getPosition() {
-        return party[0];
+        return headPartyMember();
     }
 
     @Override
@@ -118,7 +130,7 @@ public class Party implements Moveable, Positionable {
 
     @Override
     public void setPosition(int y, int x) {
-        party[0].setPosition(y, x);
+        headPartyMember().setPosition(y, x);
     }
 
     @Override
@@ -131,15 +143,17 @@ public class Party implements Moveable, Positionable {
     }
 
     public void setCharacters(A_Class[] characters) {
-        this.characters = new ArrayList<A_Class>(Arrays.asList(characters));
+        this.characters = new ArrayList<>(Arrays.asList(characters));
+        party.clear();
+
+        for (int i = 0; i < characters.length; i++) {
+            party.add(new PositionableObject(baseRepresentation));
+        }
     }
 
     public void addCharacter(A_Class character) {
-        if (this.characters.size() >= this.party.length) {
-            throw new RuntimeException("Too many characters for the given party");
-        }
-
         this.characters.add(character);
+        this.party.add(new PositionableObject(baseRepresentation));
     }
 
     /**
@@ -149,11 +163,13 @@ public class Party implements Moveable, Positionable {
     public void removeCharacter(A_Class character) {
         if (this.characters.contains(character)) {
             this.characters.remove(character);
-            PositionableObject[] newParty = new PositionableObject[this.party.length - 1];
-            System.arraycopy(this.party, 0, newParty, 0, newParty.length);
-            this.party = newParty;
+            this.party.remove(this.party.size() - 1);
         } else {
             throw new RuntimeException("Character does not exist");
         }
+    }
+    
+    private PositionableObject headPartyMember() {
+        return party.get(0);
     }
 }
