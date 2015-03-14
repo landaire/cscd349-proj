@@ -1,5 +1,5 @@
-﻿/* blacken - a library for Roguelike games
- * Copyright © 2012 Steven Black <yam655@gmail.com>
+/* blacken - a library for Roguelike games
+ * Copyright &copy; 2012 Steven Black <yam655@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,10 @@ import com.cscd.game.event.UpdateMessageEvent;
 import com.cscd.game.factory.ConfigFactory;
 import com.cscd.game.goals.DungeonGoals;
 import com.cscd.game.model.characters.bad.Ogre;
+import com.cscd.game.model.characters.builder.CharacterBuilder;
 import com.cscd.game.model.characters.good.*;
 import com.cscd.game.model.classes.A_Class;
 import com.cscd.game.ui.Color;
-import com.cscd.game.ui.builder.CharacterBuilder;
 import com.cscd.game.ui.character.*;
 import com.googlecode.blacken.bsp.BSPTree;
 import com.googlecode.blacken.colors.ColorNames;
@@ -726,27 +726,43 @@ public class Dungeon implements Observer {
         boolean ready = false;
         term.disableEventNotices();
 
-        ArrayList<A_Class> chosenCharacters = new ArrayList<>(6);
+        ArrayList<A_Class> chosenCharacters = new ArrayList<>();
         String chosenCharacterNames = "";
-        while (!ready) {
+
+        // Register selectable heroes
+        HashMap<Integer, String> heroes = new HashMap<>();
+        String[] names = new String[] {
+                Beast.TYPE, Hospital.TYPE, Hunter.TYPE, Mage.TYPE,
+                Ninja.TYPE, Paladin.TYPE, Warlock.TYPE,
+        };
+
+        for (int i = 0; i < names.length; i++) {
+            heroes.put(i + 1, names[i]);
+        }
+
+        String error = "";
+        while (true) {
             term.clear();
             term.setCurBackground(0);
             term.setCurForeground(7);
-            centerOnLine(0, "Choose ");
+            centerOnLine(0, "Choose your party");
 
-            term.mvputs(3, 0, "1. Beast");
-            term.mvputs(5, 0, "2. Hospital");
-            term.mvputs(7,0, "3. Hunter");
-            term.mvputs(9,0, "4. Mage");
-            term.mvputs(11,0, "5. Ninja");
-            term.mvputs(13,0, "6. Paladin");
-            term.mvputs(15,0, "7. Warlock");
-            term.mvputs(17,0, "Chosen characters: " + chosenCharacterNames);
+            int line = 3;
+            for (Map.Entry<Integer, String> entry : heroes.entrySet()) {
+                term.mvputs(line, 0, String.format("%d. %s", entry.getKey(), entry.getValue()));
+                line += 2;
+            }
+
+            term.mvputs(line, 0, "Chosen characters: " + chosenCharacterNames);
+            if (!error.isEmpty()) {
+                term.mvputs(++line, 0, String.format("Error: %s", error));
+            }
+
             int last = term.getHeight() - 1;
             term.mvputs(last-1, 0, "Press '?' for Help.");
             if(characterCount >= 2)
             {
-            	alignRight(last-0, "Press any other key to continue.");
+            	alignRight(last-0, "Press C to continue");
             	
             	//need a way to disable Enter key until they have 2 or more in the party
             }
@@ -764,53 +780,37 @@ public class Dungeon implements Observer {
                 // modifier = key;
                 key = term.getch(); // should be immediate
             }
-            switch(key) {
-                case BlackenKeys.NO_KEY:
-                case BlackenKeys.RESIZE_EVENT:
-                    // should be safe
-                    break;
-                case '1':
-                    chosenCharacters.add(new Beast());
-                    chosenCharacterNames += "Beast, ";
-                    characterCount = characterCount+1;
-                    break;
-                case '2':
-                    chosenCharacters.add(new Hospital());
-                    chosenCharacterNames += "Hospital, ";
-                    characterCount = characterCount+1;
-                	break;
-                case '3':
-                	chosenCharacters.add(new Hunter());
-                    chosenCharacterNames += "Hunter, ";
-                    characterCount = characterCount+1;
-                    break;
-                case '4':
-                	chosenCharacters.add(new Mage());
-                    chosenCharacterNames += "Mage, ";
-                    characterCount = characterCount+1;
-                    break;
-                case '5':
-                	chosenCharacters.add(new Ninja());
-                    chosenCharacterNames += "Ninja, ";
-                    characterCount = characterCount+1;
-                    break;
-                case '6':
-                	chosenCharacters.add(new Paladin());
-                    chosenCharacterNames += "Paladin, ";
-                    characterCount = characterCount+1;
-                    break;
-                case '7':
-                	chosenCharacters.add(new Warlock());
-                    chosenCharacterNames += "Warlock, ";
-                    characterCount = characterCount+1;
-                    break;
-                case '?':
-                    showHelp();
-                    break;
-                default:
-                    ready = true;
-                    break;
+
+            // Ignore these keys
+            if (key == BlackenKeys.NO_KEY || key == BlackenKeys.RESIZE_EVENT) {
+                continue;
             }
+
+            if (key >= '0' && key <= '9') {
+                int selectedCharacter = Integer.parseInt(Character.toString((char)key));
+
+                // Check if the user's input is invalid -- if it is then display an error and continue the loop
+                if (!heroes.containsKey(selectedCharacter) ) {
+                    error = "Invalid character selection";
+                    continue;
+                }
+
+                String type = heroes.get(selectedCharacter);
+                chosenCharacterNames += type + ", ";
+                characterCount++;
+
+                chosenCharacters.add(CharacterBuilder.build(type));
+                error = "";
+                continue;
+            } else if (key == 'C' || key == 'c') {
+                if (characterCount >= 2) {
+                    break;
+                }
+                error = "Please choose at least two party members";
+                continue;
+            }
+
+            error = "Invalid input";
         }
     }//end choose
 }
