@@ -9,9 +9,10 @@ import com.cscd.game.model.classes.A_ClassPhysicalWarrior;
  */
 public class Beast extends A_ClassPhysicalWarrior
 {
+    public static final String TYPE = "Beast";
  public Beast()
  {
-  super("Beast",500,100,70,95,.8);
+  super(Beast.TYPE,500,100,70,95,.8);
  }
  public Beast(String name, int HP, int MP, int minDamage, int maxDamage, double chanceToHit)
  {

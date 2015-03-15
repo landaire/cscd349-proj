@@ -1,5 +1,5 @@
 /* blacken - a library for Roguelike games
- * Copyright © 2012 Steven Black <yam655@gmail.com>
+ * Copyright &copy; 2012 Steven Black <yam655@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,10 @@ import com.cscd.game.event.RecenterMapEvent;
 import com.cscd.game.event.UpdateMessageEvent;
 import com.cscd.game.factory.ConfigFactory;
 import com.cscd.game.goals.DungeonGoals;
-import com.cscd.game.model.characters.bad.Ogre;
+import com.cscd.game.model.characters.builder.CharacterBuilder;
+import com.cscd.game.model.characters.good.*;
+import com.cscd.game.model.classes.A_Class;
 import com.cscd.game.ui.Color;
-import com.cscd.game.ui.builder.CharacterBuilder;
 import com.cscd.game.ui.character.*;
 import com.googlecode.blacken.bsp.BSPTree;
 import com.googlecode.blacken.colors.ColorNames;
@@ -31,7 +32,6 @@ import com.googlecode.blacken.core.Obligations;
 import com.googlecode.blacken.core.Random;
 import com.googlecode.blacken.dungeon.Room;
 import com.googlecode.blacken.dungeon.SimpleDigger;
-import com.googlecode.blacken.examples.Dungeon;
 import com.googlecode.blacken.extras.PerlinNoise;
 import com.googlecode.blacken.grid.Grid;
 import com.googlecode.blacken.grid.Point;
@@ -41,7 +41,6 @@ import com.googlecode.blacken.terminal.*;
 
 import java.util.*;
 
-import jdk.nashorn.internal.runtime.regexp.joni.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,7 +74,7 @@ public class Dungeon implements Observer {
     private List<Map<Integer, Representation>> representations = new ArrayList<>();
     private int represent = 0;
     private boolean splashShown = false;
-    private boolean splashShown2 = false;
+    private boolean partySelectionShown = false;
     private String helpMessage =
 "Dungeon Example Commands\n" +
 "============================================================================\n" +
@@ -116,14 +115,8 @@ public class Dungeon implements Observer {
         e.add(ConfigFactory.get("player"), Color.Yellow.value);
         r.put(ConfigFactory.get("player"), e);
 
-        // Here, each player representation is added
-        player = new Party(new PositionableObject[]{
-                new PositionableObject(e),
-                new PositionableObject(e),
-                new PositionableObject(e),
-                new PositionableObject(e),
-                new PositionableObject(e),
-        });
+        // Initialize the party with a base representation.
+        player = new Party(e);
 
         e = new Representation();
         e.add(ConfigFactory.get("room:door"), 58, 130, 94, 94, 94, 94, 94, 94, 94, 94);
@@ -366,6 +359,8 @@ public class Dungeon implements Observer {
      * @return the quit status
      */
     public boolean loop() {
+        chooseParty();
+
         makeMap();
         term.disableEventNotices();
         int ch = BlackenKeys.NO_KEY;
@@ -713,32 +708,57 @@ public class Dungeon implements Observer {
         }
     }
     
-    public void chooseCharacter()
+    public void chooseParty()
     {
-    	if (splashShown2) {
+    	if (partySelectionShown) {
             return;
         }
-        splashShown2 = true;
+        partySelectionShown = true;
 
-        boolean ready = false;
+        int characterCount = 0;
         term.disableEventNotices();
-        while (!ready) {
+
+        ArrayList<A_Class> chosenCharacters = new ArrayList<>();
+        String chosenCharacterNames = "";
+
+        // Register selectable heroes
+        HashMap<Integer, String> heroes = new HashMap<>();
+        String[] names = new String[] {
+                Beast.TYPE, Hospital.TYPE, Hunter.TYPE, Mage.TYPE,
+                Ninja.TYPE, Paladin.TYPE, Warlock.TYPE,
+        };
+
+        for (int i = 0; i < names.length; i++) {
+            heroes.put(i + 1, names[i]);
+        }
+
+        String error = "";
+        while (true) {
             term.clear();
             term.setCurBackground(0);
             term.setCurForeground(7);
-            centerOnLine(0, "Character Choice");
+            centerOnLine(0, "Choose your party");
 
-            term.mvputs(3, 0, "1. Beast");
-            term.mvputs(5, 0, "2. Hospital");
-            term.mvputs(7,0, "3. Hunter");
-            term.mvputs(9,0, "4. Mage");
-            term.mvputs(11,0, "5. Ninja");
-            term.mvputs(13,0, "6. Paladin");
-            term.mvputs(15,0, "7. Warlock");
-            term.mvputs(17,0, "");
+            int line = 3;
+            for (Map.Entry<Integer, String> entry : heroes.entrySet()) {
+                term.mvputs(line, 0, String.format("%d. %s", entry.getKey(), entry.getValue()));
+                line += 2;
+            }
+
+            term.mvputs(line, 0, "Chosen characters: " + chosenCharacterNames);
+            if (!error.isEmpty()) {
+                term.mvputs(++line, 0, String.format("Error: %s", error));
+            }
+
             int last = term.getHeight() - 1;
             term.mvputs(last-1, 0, "Press '?' for Help.");
-            alignRight(last-0, "Press any other key to continue.");
+            if(characterCount >= 2)
+            {
+            	alignRight(last-0, "Press C to continue");
+            	
+            	//need a way to disable Enter key until they have 2 or more in the party
+            }
+            //alignRight(last-0, "Press any other key to continue.");
             int key = BlackenKeys.NO_KEY;
             while(key == BlackenKeys.NO_KEY) {
                 // This works around an issue with the AWT putting focus someplace weird
@@ -752,32 +772,39 @@ public class Dungeon implements Observer {
                 // modifier = key;
                 key = term.getch(); // should be immediate
             }
-            switch(key) {
-                case BlackenKeys.NO_KEY:
-                case BlackenKeys.RESIZE_EVENT:
-                    // should be safe
-                    break;
-                case '1':
-                    break;
-                case '2':
-                	break;
-                case '3':
-                    break;
-                case '4':
-                    break;
-                case '5':
-                    break;
-                case '6':
-                    break;
-                case '7':
-                    break;
-                case '?':
-                    showHelp();
-                    break;
-                default:
-                    ready = true;
-                    break;
+
+            // Ignore these keys
+            if (key == BlackenKeys.NO_KEY || key == BlackenKeys.RESIZE_EVENT) {
+                continue;
             }
+
+            if (key >= '0' && key <= '9') {
+                int selectedCharacter = Integer.parseInt(Character.toString((char)key));
+
+                // Check if the user's input is invalid -- if it is then display an error and continue the loop
+                if (!heroes.containsKey(selectedCharacter) ) {
+                    error = "Invalid character selection";
+                    continue;
+                }
+
+                String type = heroes.get(selectedCharacter);
+                chosenCharacterNames += type + ", ";
+                characterCount++;
+
+                chosenCharacters.add(CharacterBuilder.build(type));
+                error = "";
+                continue;
+            } else if (key == 'C' || key == 'c') {
+                if (characterCount >= 2) {
+                    break;
+                }
+                error = "Please choose at least two party members";
+                continue;
+            }
+
+            error = "Invalid input";
         }
+
+        this.player.setCharacters(chosenCharacters.toArray(new A_Class[chosenCharacters.size()]));
     }//end choose
 }

@@ -9,9 +9,10 @@ import com.cscd.game.model.classes.A_ClassPhysicalRogue;
  */
 public class Ninja extends A_ClassPhysicalRogue
 {
+    public static final String TYPE = "Ninja";
  public Ninja()
  {
-  super("Ninja",400,100,25,45,.7);
+  super(Ninja.TYPE,400,100,25,45,.7);
  }
  public Ninja(String name, int HP, int MP, int minDamage, int maxDamage, double chanceToHit)
  {

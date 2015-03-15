@@ -1,6 +1,7 @@
 package com.cscd.game.event.listener;
 
 import com.cscd.game.event.EventDispatcherFactory;
+import com.cscd.game.event.PartyMoveEvent;
 import com.cscd.game.event.RandomEncounterEvent;
 
 import java.util.Observable;
@@ -17,6 +18,10 @@ public class PartyMoveListener implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
+        if (!(arg instanceof PartyMoveEvent)) {
+            return;
+        }
+
         // TODO: logic for limiting encounters?
 
         if (steps == 0) {
@@ -25,6 +30,7 @@ public class PartyMoveListener implements Observer {
             // 25% chance of firing this event
             if (rand.nextInt(101) > 75) {
                 encounters++;
+                System.out.println("Random encounter");
                 EventDispatcherFactory.get().notify(new RandomEncounterEvent());
             }
         } else {
