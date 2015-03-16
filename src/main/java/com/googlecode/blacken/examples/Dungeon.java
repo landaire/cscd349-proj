@@ -73,6 +73,7 @@ public class Dungeon implements Observer {
     private Set<Integer> passable;
     private List<Map<Integer, Representation>> representations = new ArrayList<>();
     private int mapRepresentation = 0;
+    private boolean reset = true;
 
     public void addRepresentations() {
 
@@ -343,7 +344,6 @@ public class Dungeon implements Observer {
      * @return the quit status
      */
     public boolean loop() {
-        boolean reset = true;
         int ch = BlackenKeys.NO_KEY;
         int mod;
 
@@ -437,7 +437,7 @@ public class Dungeon implements Observer {
             term.mvputs(term.getHeight(), 0, "You won!");
         }
         String msg = "Q to quit.";
-        term.mvputs(term.getHeight(), term.getWidth()-msg.length()-1, msg);
+        term.mvputs(term.getHeight(), term.getWidth() - msg.length() - 1, msg);
     }
 
     private void refreshScreen() {
@@ -577,7 +577,7 @@ public class Dungeon implements Observer {
             this.dirtyStatus = event.dirtyStatus();
             this.updateMessage(event.updateMessage());
         } else if (arg instanceof RecenterMapEvent) {
-            checkForRecenter(((RecenterMapEvent)arg).positionable());
+            checkForRecenter(((RecenterMapEvent) arg).positionable());
         }
     }
 
@@ -611,7 +611,12 @@ public class Dungeon implements Observer {
  
  public void gameOver(String string)
  {
-  System.out.println(string);
-  System.exit(0);
+     DeathView view = new DeathView();
+     YesNoViewResponse response = view.prompt(null);
+     if (response.isYes()) {
+         this.reset = true;
+     } else {
+         quit();
+     }
  }
 }

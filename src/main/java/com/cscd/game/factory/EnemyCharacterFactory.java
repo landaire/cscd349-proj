@@ -25,7 +25,7 @@ public class EnemyCharacterFactory
  public ArrayList<A_Class> getEnemies()
  {
   Random num = new Random(System.currentTimeMillis());
-  int amount = (int)(Math.random()*2);
+  int amount = (int)(Math.random()*2) + 1;
   ArrayList<A_Class> enemies = new ArrayList<>();
   for (int i = 0; i < amount; i++)
   {

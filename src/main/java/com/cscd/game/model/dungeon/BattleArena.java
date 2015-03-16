@@ -65,7 +65,7 @@ public class BattleArena
  private void heroTurn()
  {
   // ask user if they want to attack, potion, or heal
-  for (int i = 0; i < _theParty.length; i++)
+  for (int i = 0; i < _theParty.length && _encounter.size() > 0; i++)
   {
    _currHero = _theParty[i];
    A_Class enemyToAttack;
@@ -77,6 +77,9 @@ public class BattleArena
      case ATTACK:
       enemyToAttack = enemyToAttack();
       _log += "\r\n" + (_currHero.attack(enemyToAttack));
+         if (enemyToAttack.isDead()) {
+             _encounter.remove(enemyToAttack);
+         }
       break;
      case POTION:
       _log += "\r\n" + _currHero.usePotion();
@@ -91,7 +94,7 @@ public class BattleArena
 
  private A_Class enemyToAttack()
  {
-  A_Class choice;
+  A_Class choice = null;
   int i;
   while (_encounter.size() > 0)
   {
@@ -117,9 +120,9 @@ public class BattleArena
    if (key >= '1' && key <= Integer.toString(_encounter.size()).charAt(0))
    {
     choice = _encounter.get(Integer.parseInt(Character.toString((char) key)) - 1);
-    if (choice.isDead())
-        _encounter.remove(choice);
+    if (choice.isDead()) {
         continue;
+    }
     else
      break;
    }
@@ -177,14 +180,9 @@ public class BattleArena
   if (i == _theParty.length)
    _dungeon.gameOver("All heroes are dead");
 
-  i = 0;
-  for (A_Class enemy: _encounter)
-  {
-   if (enemy.isDead())
-    i++;
+  if (_encounter.size() == 0) {
+      return false;
   }
-  if (i == _encounter.size())
-   return false;
 
   return true;
  }
