@@ -58,14 +58,7 @@ public class CharacterSelectionView extends AbstractView {
                 //need a way to disable Enter key until they have 2 or more in the party
             }
             //alignRight(last-0, "Press any other key to continue.");
-            int key = BlackenKeys.NO_KEY;
-            while(key == BlackenKeys.NO_KEY) {
-                // This works around an issue with the AWT putting focus someplace weird
-                // if the window is not in focus when it is shown. It only happens on
-                // startup, so a splash screen is the perfect place to fix it.
-                // A normal game might want an animation at such a spot.
-                key = term.getch(200);
-            }
+            int key = getKeyInput();
             // int modifier = BlackenKeys.NO_KEY;
             if (BlackenKeys.isModifier(key)) {
                 // modifier = key;
