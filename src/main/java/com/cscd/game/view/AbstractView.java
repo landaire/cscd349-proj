@@ -1,6 +1,7 @@
 package com.cscd.game.view;
 
 import com.cscd.game.factory.DungeonFactory;
+import com.googlecode.blacken.terminal.BlackenKeys;
 import com.googlecode.blacken.terminal.CursesLikeAPI;
 
 /**
@@ -42,5 +43,18 @@ public abstract class AbstractView implements View {
 
     protected void clear() {
         this.getTerm().clear();
+    }
+
+    protected int getKeyInput() {
+        int key = BlackenKeys.NO_KEY;
+        while(key == BlackenKeys.NO_KEY) {
+            // This works around an issue with the AWT putting focus someplace weird
+            // if the window is not in focus when it is shown. It only happens on
+            // startup, so a splash screen is the perfect place to fix it.
+            // A normal game might want an animation at such a spot.
+            key = term.getch(200);
+        }
+
+        return key;
     }
 }
