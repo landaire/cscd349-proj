@@ -1,6 +1,7 @@
 package com.cscd.game.model.dungeon;
 
 import com.cscd.game.model.classes.A_Class;
+import com.cscd.game.model.classes.A_ClassMagicHealerPriest;
 import com.cscd.game.ui.character.Party;
 import com.googlecode.blacken.examples.Dungeon;
 import com.googlecode.blacken.terminal.BlackenKeys;
@@ -43,6 +44,7 @@ public class BattleArena
  {
   boolean cont = true;
 
+  _term.disableEventNotices();
   clearTerm();
   _theParty = _party.getCharacters();
 
@@ -53,17 +55,19 @@ public class BattleArena
   while (cont)
   {
    //TODO fix the log disappearing after enemy turn
-   _log = "";
    heroTurn();
    enemyTurn();
    cont = checkIfAlive();
   }
   Loot loot = new Loot(_theParty);
   _log = loot.generateLoot();
+  clearTerm();
  }
 
  private void heroTurn()
  {
+  if (_log.length() > 300)
+   _log = "";
   // ask user if they want to attack, potion, or heal
   for (int i = 0; i < _theParty.length && _encounter.size() > 0; i++)
   {
@@ -76,20 +80,58 @@ public class BattleArena
      // if they want to attack give them a list of enemies to attack
      case ATTACK:
       enemyToAttack = enemyToAttack();
-      _log += "\r\n" + (_currHero.attack(enemyToAttack));
+      _log += (_currHero.attack(enemyToAttack));
          if (enemyToAttack.isDead()) {
              _encounter.remove(enemyToAttack);
          }
       break;
      case POTION:
-      _log += "\r\n" + _currHero.usePotion();
+      _log += _currHero.usePotion();
       break;
      // execute attack on the enemy and end turn
      case HEAL:
+      _log += ((A_ClassMagicHealerPriest)_currHero).heal(heroToHeal());
       break;
     }
    }
   }
+ }
+
+ private A_Class heroToHeal()
+ {
+  A_Class choice;
+  while (true)
+  {
+   clearTerm();
+   int line = 1;
+   int i = 1;
+   _term.mvputs(line,0,"Choose who to heal");
+   for (A_Class hero: _theParty)
+   {
+    if (!hero.isDead())
+     _term.mvputs(line+=2,0,i+++": "+hero.getName()+" "+hero.getHP()+" HP remaining");
+   }
+
+   int key = BlackenKeys.NO_KEY;
+   while (key == BlackenKeys.NO_KEY)
+    key = _term.getch(200);
+   if (BlackenKeys.isModifier(key))
+    key = _term.getch();
+
+
+   if (key == BlackenKeys.NO_KEY || key == BlackenKeys.RESIZE_EVENT)
+    continue;
+   if (key >= '1' && key <= Integer.toString(_theParty.length).charAt(0))
+   {
+    choice = _theParty[(Integer.parseInt(Character.toString((char) key)) - 1)];
+    if (choice.isDead()) {
+     continue;
+    }
+    else
+     break;
+   }
+  }
+  return choice;
  }
 
  private A_Class enemyToAttack()
@@ -105,7 +147,7 @@ public class BattleArena
   for (A_Class enemy: _encounter)
   {
    if (!enemy.isDead())
-    _term.mvputs(line+=2,0,i+++": "+enemy.getName());
+    _term.mvputs(line+=2,0,i+++": "+enemy.getName()+" "+enemy.getHP()+" HP remaining");
   }
 
   int key = BlackenKeys.NO_KEY;
@@ -135,6 +177,8 @@ public class BattleArena
 
  private void enemyTurn()
  {
+  if (_log.length() > 300)
+   _log = "";
   A_Class hero;
   // roll die to either attack or use potion (don't use potion at full health)
   for (int i = 0; i < _encounter.size(); i++)
@@ -159,7 +203,7 @@ public class BattleArena
       if (!hero.isDead())
        break;
      }
-     _log += _currEnemy.attack(hero) + "\n";
+     _log += _currEnemy.attack(hero);
     }
     // if attack, choose a random hero to attack
     // attack hero and end turn
@@ -206,9 +250,11 @@ public class BattleArena
   {
    clearTerm();
    int line = 1;
-  _term.mvputs(line, 0, "Choose an option for "+_currHero);
+   _term.mvputs(line, 0, "Choose an option for "+_currHero+" "+_currHero.getHP()+" HP remaining");
   _term.mvputs(line+=2,0, "1. Attack");
   _term.mvputs(line+=2,0, "2. Potion");
+   //code smell
+   if (_currHero.getName().equals("Hospital"))
   _term.mvputs(line+=2,0, "3. Heal");
 
   int key = BlackenKeys.NO_KEY;
