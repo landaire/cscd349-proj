@@ -552,7 +552,8 @@ public class Dungeon implements Observer {
         }
         splashShown = true;
 
-
+        SplashView splashView = new SplashView();
+        splashView.execute();
     }
 
     /**
