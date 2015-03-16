@@ -5,6 +5,7 @@ import com.cscd.game.ui.character.Party;
 import com.googlecode.blacken.examples.Dungeon;
 import com.googlecode.blacken.terminal.BlackenKeys;
 import com.googlecode.blacken.terminal.CursesLikeAPI;
+import sun.rmi.server.InactiveGroupException;
 
 import java.util.ArrayList;
 
@@ -15,8 +16,7 @@ import java.util.ArrayList;
  */
 public class BattleArena
 {
- private final static int ATTACK = 0;
- private final static int DEFEND = 1;
+ private final static int ATTACK = 1;
  private final static int POTION = 2;
  private final static int HEAL = 3;
 
@@ -56,6 +56,7 @@ public class BattleArena
    enemyTurn();
    cont = checkIfAlive();
   }
+  new Loot(_theParty);
  }
 
  private void heroTurn()
@@ -71,12 +72,11 @@ public class BattleArena
     {
      // if they want to attack give them a list of enemies to attack
      case ATTACK:
-      enemyToAttack = _dungeon.enemyToAttack(_encounter);
-      clearTerm();
-      combatMessage(_currHero.attack(enemyToAttack));
+      enemyToAttack = enemyToAttack();
+      _log += (_currHero.attack(enemyToAttack));
       break;
      case POTION:
-      _currHero.usePotion();
+      _log += _currHero.usePotion();
       break;
      // execute attack on the enemy and end turn
      case HEAL:
@@ -86,15 +86,47 @@ public class BattleArena
   }
  }
 
- private void combatMessage(String string)
+ private A_Class enemyToAttack()
  {
-  int line = 3;
-  _term.mvputs(0,line,string);
+  A_Class choice;
+  while (true)
+  {
+   clearTerm();
+   int line = 0, i = 1;
+  _term.mvputs(line+=2,0, "Choose who to attack");
+  for (A_Class enemy: _encounter)
+  {
+   if (!enemy.isDead())
+    _term.mvputs(line++,0,i+++": "+enemy.getName());
+  }
+
+  int key = BlackenKeys.NO_KEY;
+  while (key == BlackenKeys.NO_KEY)
+   key = _term.getch(200);
+  if (BlackenKeys.isModifier(key))
+   key = _term.getch();
+
+
+   if (key == BlackenKeys.NO_KEY || key == BlackenKeys.RESIZE_EVENT)
+    continue;
+   if (key >= '1' && key <= Integer.toString(_encounter.size()).charAt(0))
+   {
+    choice = _encounter.get(Integer.parseInt(Character.toString((char) key))-1);
+    if (choice.isDead())
+     continue;
+    else
+     break;
+   }
+  }
+  return choice;
+
  }
+
 
  private void enemyTurn()
  {
   _log = "";
+  A_Class hero;
   // roll die to either attack or use potion (don't use potion at full health)
   for (int i = 0; i < _encounter.size(); i++)
   {
@@ -109,9 +141,17 @@ public class BattleArena
     }
 
     if (num > 0)
-     _currEnemy.usePotion();
+    _log += _currEnemy.usePotion();
     else
-    _log +=_currEnemy.attack(_theParty[(int) (Math.random() * _theParty.length)]) + "\n";
+    {
+     while (true)
+     {
+     hero =_theParty[(int) (Math.random() * _theParty.length)];
+      if (!hero.isDead())
+       break;
+     }
+     _log += _currEnemy.attack(hero) + "\n";
+    }
     // if attack, choose a random hero to attack
     // attack hero and end turn
     checkIfAlive();
@@ -150,25 +190,28 @@ public class BattleArena
   _term.setCurForeground(7);
   String header = "Our heroes have encountered enemies!";
   _term.mvputs(0,_term.getWidth()/2-header.length()/2,header);
-  _term.mvputs(0,_term.getWidth()/2,_log);
+  _term.mvputs(_term.getWidth()/2,0,_log);
  }
+
 
 
  private int getOption()
  {
-  clearTerm();
-  int option = -1;
-  int line = 3;
-  _term.mvputs(0, line++, "Choose an option");
-  ;
-  _term.mvputs(0, line++, "1. Attack");
-  _term.mvputs(0, line++, "2. Potion");
-  _term.mvputs(0, line++, "3. Heal");
+ int option;
+  while (true)
+  {
+   clearTerm();
+   int line = 0;
+  _term.mvputs(line,0, "Choose an option for "+_currHero);
+  _term.mvputs(line+=2,0, "1. Attack");
+  _term.mvputs(line+=2,0, "2. Potion");
+  _term.mvputs(line+=2,0, "3. Heal");
 
   int key = BlackenKeys.NO_KEY;
   while (key == BlackenKeys.NO_KEY)
   {
    key = _term.getch(200);
+  }
    if (key == BlackenKeys.NO_KEY || key == BlackenKeys.RESIZE_EVENT)
     continue;
    if (key >= '0' && key <= '3')

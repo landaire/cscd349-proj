@@ -604,24 +604,6 @@ public class Dungeon implements Observer {
  {
   return term;
  }
- public int getOption()
- {
-  return 0;  
- }
- 
- public A_Class enemyToAttack(ArrayList<A_Class> enemies)
- {
-  for (A_Class enemy: enemies)
-   if (!enemy.isDead())
-    return enemy;
-  return enemies.get(0);
- }
- 
- public void combatMessage(String message)
- {
-  System.out.println(message);
-  
- }
  
  public void gameOver(String string)
  {

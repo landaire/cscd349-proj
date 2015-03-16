@@ -81,17 +81,21 @@ public abstract class A_Class
   return _isDead;
  }
 
- public void heal(int HP)
+ public int heal(int HP)
  {
+  int healAmt = HP;
+
   if (HP + _HP > _maxHP)
    _HP = _maxHP;
   else
    _HP += HP;
+
+  return healAmt;
  }
  
- public void usePotion()
+ public String usePotion()
  {
-  heal(_inventory.consumePotion());
+  return _name+" heals for "+heal(_inventory.consumePotion())+" health\n"+_name+" is now at "+ _HP+" health";
  }
  
  public int getMaxHP()
