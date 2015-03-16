@@ -31,7 +31,7 @@ public class PartyMoveListener implements Observer {
             // 25% chance of firing this event
             if (rand.nextInt(101) > 75) {
                 encounters++;
-                System.out.println("Random encounter");
+                //System.out.println("Random encounter");
                 EventDispatcherFactory.get().notify(new RandomEncounterEvent(((PartyMoveEvent) arg).party()));
             }
         } else {

@@ -29,6 +29,7 @@ public class BattleArena
  private A_Class[] _theParty;
  private CursesLikeAPI _term;
  private String _log;
+ private boolean _surpriseAttack;
 
  public BattleArena(Party party, ArrayList<A_Class> encounter, boolean surpriseAttack, Dungeon dungeon)
  {
@@ -37,6 +38,7 @@ public class BattleArena
   _dungeon = dungeon;
   _term = _dungeon.getTerminal();
   _log = "";
+  _surpriseAttack = surpriseAttack;
   battle(surpriseAttack);
  }
 
@@ -61,7 +63,7 @@ public class BattleArena
   }
   Loot loot = new Loot(_theParty);
   _log = loot.generateLoot();
-  clearTerm();
+  displayLoot();
  }
 
  private void heroTurn()
@@ -237,11 +239,11 @@ public class BattleArena
   _term.setCurBackground(0);
   _term.setCurForeground(7);
   String header = "Our heroes have encountered enemies!";
+  if (_surpriseAttack)
+   header += " \nSurprise attack!";
   _term.mvputs(0,_term.getWidth()/2-header.length()/2,header);
   _term.mvputs(_term.getWidth()/2,0,_log);
  }
-
-
 
  private int getOption()
  {
@@ -271,5 +273,11 @@ public class BattleArena
    }
   }
   return option;
+ }
+
+ private void displayLoot()
+ {
+  _term.clear();
+  _term.mvputs(_term.getHeight(),_term.getWidth()/2,_log);
  }
 }

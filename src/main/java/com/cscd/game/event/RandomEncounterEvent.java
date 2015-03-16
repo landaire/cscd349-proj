@@ -32,6 +32,9 @@ public class RandomEncounterEvent {
  
  public boolean surpriseAttack()
  {
-  return true;
+  int rng = (int)Math.random()*2;
+  if (rng < 1)
+   return true;
+  return false;
  }
 }

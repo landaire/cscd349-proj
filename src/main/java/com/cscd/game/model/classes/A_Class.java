@@ -95,7 +95,7 @@ public abstract class A_Class
  
  public String usePotion()
  {
-  return _name+" heals for "+heal(_inventory.consumePotion())+" health\n"+_name+" is now at "+ _HP+" health";
+  return _name+" heals for "+heal(_inventory.consumePotion())+" health\n"+_name+" is now at "+ _HP+" health\n";
  }
  
  public int getMaxHP()
