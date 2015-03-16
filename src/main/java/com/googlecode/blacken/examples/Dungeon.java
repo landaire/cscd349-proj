@@ -25,6 +25,7 @@ import com.cscd.game.model.characters.good.*;
 import com.cscd.game.model.classes.A_Class;
 import com.cscd.game.ui.Color;
 import com.cscd.game.ui.character.*;
+import com.cscd.game.view.*;
 import com.googlecode.blacken.bsp.BSPTree;
 import com.googlecode.blacken.colors.ColorNames;
 import com.googlecode.blacken.colors.ColorPalette;
@@ -439,6 +440,7 @@ public class Dungeon implements Observer {
     }
     
     private boolean doAction(int modifier, int ch) {
+        View nextView = null;
         if (BlackenModifier.MODIFIER_KEY_CTRL.hasFlag(modifier)) {
             switch (ch) {
             case 'l':
@@ -492,23 +494,24 @@ public class Dungeon implements Observer {
                 this.quit = true;
                 return false;
             case 'L':
-                showMyLicense();
-                refreshScreen();
+                nextView = new LicenseView();
                 break;
             case 'N':
-                showLegalNotices();
-                refreshScreen();
+                nextView = new LegalView();
                 break;
             case 'F':
-                showFontLicense();
-                refreshScreen();
+                nextView = new FontLicenseView();
                 break;
             case '?':
-                showHelp();
-                refreshScreen();
+                nextView = new HelpView();
                 break;
             default:
                 return false;
+            }
+
+            if (nextView != null) {
+                nextView.execute(null);
+                refreshScreen();
             }
         }
         return true;
@@ -549,66 +552,7 @@ public class Dungeon implements Observer {
         }
         splashShown = true;
 
-        boolean ready = false;
-        term.disableEventNotices();
-        while (!ready) {
-            term.clear();
-            term.setCurBackground(0);
-            term.setCurForeground(7);
-            centerOnLine(0, "Dungeon");
-            centerOnLine(1, "A very fun dungeon game");
-            centerOnLine(3, "Originally created by Steven Black (Copyright (C) 2010-2012)");
-            centerOnLine(5, "Modified for CSCD 349 by Lander Brandt, Tony Moua, Sean Burright");
-            centerOnLine(6, "Released under the Apache 2.0 License.");
-            term.mvputs(8, 0, "HOW TO PLAY");
-            term.mvputs(9, 0, "-----------");
-            term.mvputs(10,0, "A representation of a map is shown.  You and your party are the");
-            term.mvputs(11,0, "at sign (@).  The object is to run around collecting the numbers");
-            term.mvputs(12,0, "in order.  The numbers have walls around them that only open up");
-            term.mvputs(13,0, "if you've collected the previous number.");
-            term.mvputs(15,0, "Use the arrow keys to move around.");
-            term.mvputs(17,0, "You will randomly encounter opponents in halls");
-            int last = term.getHeight() - 1;
-            term.mvputs(last-1, 0, "Press '?' for Help.");
-            alignRight(last-0, "Press any other key to continue.");
-            int key = BlackenKeys.NO_KEY;
-            while(key == BlackenKeys.NO_KEY) {
-                // This works around an issue with the AWT putting focus someplace weird
-                // if the window is not in focus when it is shown. It only happens on
-                // startup, so a splash screen is the perfect place to fix it.
-                // A normal game might want an animation at such a spot.
-                key = term.getch(200);
-            }
-            // int modifier = BlackenKeys.NO_KEY;
-            if (BlackenKeys.isModifier(key)) {
-                // modifier = key;
-                key = term.getch(); // should be immediate
-            }
-            switch(key) {
-                case BlackenKeys.NO_KEY:
-                case BlackenKeys.RESIZE_EVENT:
-                    // should be safe
-                    break;
-                case 'l':
-                case 'L':
-                    showMyLicense();
-                    break;
-                case 'n':
-                case 'N':
-                    showLegalNotices();
-                    break;
-                case 'f':
-                case 'F':
-                    showFontLicense();
-                    break;
-                case '?':
-                    showHelp();
-                    break;
-                default:
-                    ready = true;
-                    break;
-            }
-        }
+
     }
 
     /**
@@ -618,67 +562,6 @@ public class Dungeon implements Observer {
      */
     public void quit() {
         term.quit();
-    }
-
-    private void centerOnLine(int y, String string) {
-        int offset = term.getWidth() / 2 - string.length() / 2;
-        term.mvputs(y, offset, string);
-    }
-
-    private void alignRight(int y, String string) {
-        int offset = term.getWidth() - string.length();
-        if (term.getHeight() -1 == y) {
-            offset--;
-        }
-        term.mvputs(y, offset, string);
-    }
-
-    private void showLegalNotices() {
-        // show Notices file
-        // This is the only one that needs to be shown for normal games.
-        ViewerHelper vh;
-        vh = new ViewerHelper(term, "Legal Notices", Obligations.getBlackenNotice());
-        vh.setColor(7, 0);
-        vh.run();
-    }
-
-    private void showFontLicense() {
-        // show the font license
-        ViewerHelper vh;
-        new ViewerHelper(term,
-                Obligations.getFontName() + " Font License",
-                Obligations.getFontLicense()).run();
-    }
-
-    private void showHelp() {
-        ViewerHelper vh;
-
-        String helpMessage =
-                "Dungeon Example Commands\n" +
-                        "============================================================================\n" +
-                        "Ctrl+L : recenter and redisplay the screen\n" +
-                        "j, Down : move down                  | k, Up : move up\n" +
-                        "h, Left : move left                  | l (ell), Right: move right\n" +
-                        "\n" +
-                        "Space : next representation set      | Backspace : previous representations\n" +
-                        "\n" +
-                        "Q, q, Escape : quit\n" +
-                        "\n" +
-                        "L : show my license                  | N : show legal notices\n" +
-                        "\n" +
-                        "? : this help screen\n";
-
-        vh = new ViewerHelper(term, "Help", helpMessage);
-        vh.setColor(7, 0);
-        vh.run();
-    }
-
-    private void showMyLicense() {
-        // show Apache 2.0 License
-        ViewerHelper vh;
-        vh = new ViewerHelper(term, "License", Obligations.getBlackenLicense());
-        vh.setColor(7, 0);
-        vh.run();
     }
 
     @Override
@@ -711,102 +594,10 @@ public class Dungeon implements Observer {
     
     public void chooseParty()
     {
-    	if (partySelectionShown) {
-            return;
-        }
-        partySelectionShown = true;
+        CharacterSelectionView view = new CharacterSelectionView();
+    	A_Class[] classes = (A_Class[])view.execute(null).getData();
 
-        int characterCount = 0;
-        term.disableEventNotices();
-
-        ArrayList<A_Class> chosenCharacters = new ArrayList<>();
-        String chosenCharacterNames = "";
-
-        // Register selectable heroes
-        HashMap<Integer, String> heroes = new HashMap<>();
-        String[] names = new String[] {
-                Beast.TYPE, Hospital.TYPE, Hunter.TYPE, Mage.TYPE,
-                Ninja.TYPE, Paladin.TYPE, Warlock.TYPE,
-        };
-
-        for (int i = 0; i < names.length; i++) {
-            heroes.put(i + 1, names[i]);
-        }
-
-        String error = "";
-        while (true) {
-            term.clear();
-            term.setCurBackground(0);
-            term.setCurForeground(7);
-            centerOnLine(0, "Choose your party");
-
-            int line = 3;
-            for (Map.Entry<Integer, String> entry : heroes.entrySet()) {
-                term.mvputs(line, 0, String.format("%d. %s", entry.getKey(), entry.getValue()));
-                line += 2;
-            }
-
-            term.mvputs(line, 0, "Chosen characters: " + chosenCharacterNames);
-            if (!error.isEmpty()) {
-                term.mvputs(++line, 0, String.format("Error: %s", error));
-            }
-
-            int last = term.getHeight() - 1;
-            term.mvputs(last-1, 0, "Press '?' for Help.");
-            if(characterCount >= 2)
-            {
-            	alignRight(last-0, "Press C to continue");
-            	
-            	//need a way to disable Enter key until they have 2 or more in the party
-            }
-            //alignRight(last-0, "Press any other key to continue.");
-            int key = BlackenKeys.NO_KEY;
-            while(key == BlackenKeys.NO_KEY) {
-                // This works around an issue with the AWT putting focus someplace weird
-                // if the window is not in focus when it is shown. It only happens on
-                // startup, so a splash screen is the perfect place to fix it.
-                // A normal game might want an animation at such a spot.
-                key = term.getch(200);
-            }
-            // int modifier = BlackenKeys.NO_KEY;
-            if (BlackenKeys.isModifier(key)) {
-                // modifier = key;
-                key = term.getch(); // should be immediate
-            }
-
-            // Ignore these keys
-            if (key == BlackenKeys.NO_KEY || key == BlackenKeys.RESIZE_EVENT) {
-                continue;
-            }
-
-            if (key >= '0' && key <= '9') {
-                int selectedCharacter = Integer.parseInt(Character.toString((char)key));
-
-                // Check if the user's input is invalid -- if it is then display an error and continue the loop
-                if (!heroes.containsKey(selectedCharacter) ) {
-                    error = "Invalid character selection";
-                    continue;
-                }
-
-                String type = heroes.get(selectedCharacter);
-                chosenCharacterNames += type + ", ";
-                characterCount++;
-
-                chosenCharacters.add(CharacterBuilder.build(type));
-                error = "";
-                continue;
-            } else if (key == 'C' || key == 'c') {
-                if (characterCount >= 2) {
-                    break;
-                }
-                error = "Please choose at least two party members";
-                continue;
-            }
-
-            error = "Invalid input";
-        }
-
-        this.player.setCharacters(chosenCharacters.toArray(new A_Class[chosenCharacters.size()]));
+        this.player.setCharacters(classes);
     }//end choose
 
  public CursesLikeAPI getTerminal()

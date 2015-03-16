@@ -150,7 +150,7 @@ public class BattleArena
   _term.setCurForeground(7);
   String header = "Our heroes have encountered enemies!";
   _term.mvputs(0,_term.getWidth()/2-header.length()/2,header);
-  _term.mvputs(0,_term.getWidth()/2,_log);
+  _term.mvputs(1,_term.getWidth()/2,_log);
  }
 
 
@@ -159,11 +159,10 @@ public class BattleArena
   clearTerm();
   int option = -1;
   int line = 3;
-  _term.mvputs(0, line++, "Choose an option");
-  ;
-  _term.mvputs(0, line++, "1. Attack");
-  _term.mvputs(0, line++, "2. Potion");
-  _term.mvputs(0, line++, "3. Heal");
+  _term.mvputs(line++, 0, "Choose an option");
+  _term.mvputs(line++, 0, "1. Attack");
+  _term.mvputs(line++, 0, "2. Potion");
+  _term.mvputs(line++, 0, "3. Heal");
 
   int key = BlackenKeys.NO_KEY;
   while (key == BlackenKeys.NO_KEY)
