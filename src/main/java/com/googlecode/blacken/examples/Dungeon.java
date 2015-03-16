@@ -73,8 +73,6 @@ public class Dungeon implements Observer {
     private Set<Integer> passable;
     private List<Map<Integer, Representation>> representations = new ArrayList<>();
     private int mapRepresentation = 0;
-    private boolean splashShown = false;
-    private boolean partySelectionShown = false;
 
     public void addRepresentations() {
 
@@ -345,17 +343,27 @@ public class Dungeon implements Observer {
      * @return the quit status
      */
     public boolean loop() {
-        chooseParty();
-
-        makeMap();
-        term.disableEventNotices();
+        boolean reset = true;
         int ch = BlackenKeys.NO_KEY;
         int mod;
-        updateStatus();
-        player.moveBy(0,0);
-        this.message = "Welcome to Dungeon!";
-        term.move(-1, -1);
+
         while (!quit) {
+            if (reset) {
+                chooseParty();
+
+                ch = BlackenKeys.NO_KEY;
+
+                makeMap();
+                term.disableEventNotices();
+                updateStatus();
+                player.moveBy(0,0);
+                this.message = "Welcome to Dungeon!";
+                term.move(-1, -1);
+
+                reset = false;
+            }
+
+
             if (dirtyStatus) {
                 updateStatus();
             }
@@ -547,11 +555,6 @@ public class Dungeon implements Observer {
 
 
     public void splash() {
-        if (splashShown) {
-            return;
-        }
-        splashShown = true;
-
         SplashView splashView = new SplashView();
         splashView.execute();
     }
