@@ -440,7 +440,7 @@ public class Dungeon implements Observer {
         term.mvputs(term.getHeight(), term.getWidth() - msg.length() - 1, msg);
     }
 
-    private void refreshScreen() {
+    public void refreshScreen() {
         term.clear();
         updateStatus();
         updateMessage(false);

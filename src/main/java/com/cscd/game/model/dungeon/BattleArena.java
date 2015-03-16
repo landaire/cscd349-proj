@@ -28,6 +28,7 @@ public class BattleArena
  private A_Class[] _theParty;
  private CursesLikeAPI _term;
  private String _log;
+    private boolean cont = true;
 
  public BattleArena(Party party, ArrayList<A_Class> encounter, boolean surpriseAttack, Dungeon dungeon)
  {
@@ -41,8 +42,6 @@ public class BattleArena
 
  private void battle(boolean surpriseAttack)
  {
-  boolean cont = true;
-
   clearTerm();
   _theParty = _party.getCharacters();
 
@@ -55,11 +54,14 @@ public class BattleArena
    //TODO fix the log disappearing after enemy turn
    _log = "";
    heroTurn();
-   enemyTurn();
-   cont = checkIfAlive();
+      enemyTurn();
+      cont = checkIfAlive();
   }
+
   Loot loot = new Loot(_theParty);
   _log = loot.generateLoot();
+
+     _dungeon.refreshScreen();
  }
 
  private void heroTurn()
@@ -137,7 +139,7 @@ public class BattleArena
  {
   A_Class hero;
   // roll die to either attack or use potion (don't use potion at full health)
-  for (int i = 0; i < _encounter.size(); i++)
+  for (int i = 0; i < _encounter.size() && checkIfAlive(); i++)
   {
    _currEnemy = _encounter.get(i);
    if (!_currEnemy.isDead())
@@ -171,14 +173,21 @@ public class BattleArena
 
  private boolean checkIfAlive()
  {
+     if (cont == false) {
+         return false;
+     }
+
   int i = 0;
   for (A_Class hero: _theParty)
   {
    if (hero.isDead())
     i++;
   }
-  if (i == _theParty.length)
-   _dungeon.gameOver("All heroes are dead");
+  if (i == _theParty.length) {
+      this.cont = false;
+      _dungeon.gameOver("All heroes are dead");
+      return false;
+  }
 
   if (_encounter.size() == 0) {
       return false;
