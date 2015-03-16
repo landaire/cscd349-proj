@@ -52,11 +52,14 @@ public class BattleArena
 
   while (cont)
   {
+   //TODO fix the log disappearing after enemy turn
+   _log = "";
    heroTurn();
    enemyTurn();
    cont = checkIfAlive();
   }
-  new Loot(_theParty);
+  Loot loot = new Loot(_theParty);
+  _log = loot.generateLoot();
  }
 
  private void heroTurn()
@@ -89,15 +92,17 @@ public class BattleArena
  private A_Class enemyToAttack()
  {
   A_Class choice;
+  int i;
   while (true)
   {
    clearTerm();
-   int line = 0, i = 1;
-  _term.mvputs(line+=2,0, "Choose who to attack");
+   int line = 0;
+   i = 1;
+  _term.mvputs(line,0, "Choose who to attack");
   for (A_Class enemy: _encounter)
   {
    if (!enemy.isDead())
-    _term.mvputs(line++,0,i+++": "+enemy.getName());
+    _term.mvputs(line+=2,0,i+++": "+enemy.getName());
   }
 
   int key = BlackenKeys.NO_KEY;
@@ -111,7 +116,7 @@ public class BattleArena
     continue;
    if (key >= '1' && key <= Integer.toString(_encounter.size()).charAt(0))
    {
-    choice = _encounter.get(Integer.parseInt(Character.toString((char) key))-1);
+    choice = _encounter.get(Integer.parseInt(Character.toString((char) key))-(_encounter.size() - i));
     if (choice.isDead())
      continue;
     else
@@ -125,7 +130,6 @@ public class BattleArena
 
  private void enemyTurn()
  {
-  _log = "";
   A_Class hero;
   // roll die to either attack or use potion (don't use potion at full health)
   for (int i = 0; i < _encounter.size(); i++)

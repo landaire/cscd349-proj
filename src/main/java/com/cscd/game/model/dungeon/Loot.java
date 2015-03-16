@@ -10,27 +10,31 @@ import java.util.Random;
  */
 public class Loot
 {
+ private A_Class[] _party;
+
  public Loot(A_Class[] party)
  {
-  generateLoot(party);
+  _party = party;
  }
 
- public void generateLoot(A_Class[] party)
+ public String generateLoot()
  {
 
   // 1 - 3 items will drop
   int numDrop = (int)(Math.random()*2 + 1) + 1;
   int i = 0;
 
-  shuffleArray(party);
+  shuffleArray(_party);
 
-  for (A_Class hero: party)
+  for (A_Class hero: _party)
   {
    hero.getInventory().addItem(new ItemPotionHealth());
    i++;
    if (i == numDrop)
-    return;
+    break;
   }
+
+  return "The party found "+numDrop+" potions on the corpses of their enemies";
  }
 
  private void shuffleArray(A_Class[] array)
