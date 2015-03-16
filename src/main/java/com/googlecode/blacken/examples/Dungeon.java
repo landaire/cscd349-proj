@@ -434,13 +434,22 @@ public class Dungeon implements Observer {
                 term.puts(" to win.");
             }
         } else {
-            term.mvputs(term.getHeight(), 0, "You won!");
+
+            SuccessView view = new SuccessView();
+            YesNoViewResponse response = view.prompt(null);
+            if (response.isYes()) {
+                this.reset = true;
+            } else {
+                quit();
+            }
+
+            return;
         }
         String msg = "Q to quit.";
         term.mvputs(term.getHeight(), term.getWidth() - msg.length() - 1, msg);
     }
 
-    private void refreshScreen() {
+    public void refreshScreen() {
         term.clear();
         updateStatus();
         updateMessage(false);
