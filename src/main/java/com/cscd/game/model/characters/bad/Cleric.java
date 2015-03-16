@@ -12,7 +12,7 @@ public class Cleric extends A_ClassMagicHealerPriest
 {
  public Cleric()
  {
-  super(new Inventory(),"Cleric",300,100,10,25,.6,100);
+  super(new Inventory(),"Cleric",150,100,2,10,.6,100);
  }
  
  public Cleric(int heal)

@@ -12,7 +12,7 @@ public class Skeleton extends A_ClassPhysicalRanger
 {
  public Skeleton()
  {
-  super(new Inventory(),"Skeleton",220,100,30,50,.8,20);
+  super(new Inventory(),"Skeleton",100,100,10,20,.8,20);
  }
  
  public Skeleton(int minDamage, int maxDamage)

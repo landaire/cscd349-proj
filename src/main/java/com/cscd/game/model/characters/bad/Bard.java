@@ -12,7 +12,7 @@ public class Bard extends A_ClassMagicDamageMage
 {
  public Bard()
  {
-  super(new Inventory(),"Bard",300,100,25,45,.7,25);
+  super(new Inventory(),"Bard",150,100,10,20,.7,25);
  }
  
  public Bard(Inventory inventory, String name, int HP, int MP, int minDamage, int maxDamage, double chanceToHit, int range)

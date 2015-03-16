@@ -12,7 +12,7 @@ public class DeathMaster extends A_ClassMagicDamageWarlock
 {
  public DeathMaster()
  {
-  super(new Inventory(),"Death Master",400,100,15,30,.7,25);
+  super(new Inventory(),"Death Master",200,100,15,30,.7,25);
  }
  
  public DeathMaster(int minDamage, int maxDamage)

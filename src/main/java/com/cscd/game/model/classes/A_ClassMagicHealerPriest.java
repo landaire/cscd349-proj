@@ -17,8 +17,9 @@ public abstract class A_ClassMagicHealerPriest extends A_ClassMagicHealer
  }
 
  @Override
- public int heal(A_Class enemy)
+ public String heal(A_Class hero)
  {
-  return 0;
+  hero.heal(_healAmount);
+  return this.getName()+" heals "+hero.getName()+" for "+_healAmount+" HP\n";
  }
 }

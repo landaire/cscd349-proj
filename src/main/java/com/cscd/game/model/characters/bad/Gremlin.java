@@ -12,7 +12,7 @@ public class Gremlin extends A_ClassPhysicalRogue
 {
  public Gremlin()
  {
-  super(new Inventory(),"Gremlin",250,100,15,30,.8);
+  super(new Inventory(),"Gremlin",100,100,15,30,.8);
  }
  
  public Gremlin(int minDamage, int maxDamage)

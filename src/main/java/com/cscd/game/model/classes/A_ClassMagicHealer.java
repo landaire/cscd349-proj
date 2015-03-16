@@ -15,5 +15,5 @@ public abstract class A_ClassMagicHealer extends A_ClassMagic
   super(inventory, name, HP, MP, minDamage, maxDamage, chanceToHit);
  }
  
- public abstract int heal(A_Class hero);
+ public abstract String heal(A_Class hero);
 }

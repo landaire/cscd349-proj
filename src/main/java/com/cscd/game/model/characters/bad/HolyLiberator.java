@@ -12,7 +12,7 @@ public class HolyLiberator extends A_ClassMagicDamagePaladin
 {
  public HolyLiberator()
  {
-  super(new Inventory(),"Holy Liberator",400,100,10,20,.7,0);
+  super(new Inventory(),"Holy Liberator",200,100,10,20,.7,0);
  }
  
  public HolyLiberator(int minDamage, int maxDamage)

@@ -38,7 +38,7 @@ public class EnemyCharacterFactory
      enemies.add(new Cleric());
      break;
     case DEATH_MASTER:
-     enemies.add(new Cleric());
+     enemies.add(new DeathMaster());
      break;
     case GREMLIN:
      enemies.add(new Gremlin());

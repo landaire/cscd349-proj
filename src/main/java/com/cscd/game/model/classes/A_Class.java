@@ -118,7 +118,7 @@ public abstract class A_Class
   
   int attack = (int)(Math.random() * (this.getMaxDamage() - this.getMinDamage()) +1) + this.getMinDamage();
   enemy.takeDamage(attack);
-  return this.getName()+" attacks "+enemy.getName()+" for "+attack+" damage "+ (isDead() ? enemy.getName()+" has been defeated" : "\n"+enemy.defend());
+  return this.getName()+" attacks "+enemy.getName()+" for "+attack+" damage "+ (isDead() ? enemy.getName()+" has been defeated" : "\n"+enemy.defend())+"\n";
  }
  
  public String toString()

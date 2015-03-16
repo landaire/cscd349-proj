@@ -34,7 +34,7 @@ public class Loot
     break;
   }
 
-  return "The party found "+numDrop+" potions on the corpses of their enemies";
+  return "The party found "+numDrop+" potions on the corpses of their enemies\n";
  }
 
  private void shuffleArray(A_Class[] array)

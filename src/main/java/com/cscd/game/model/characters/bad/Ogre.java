@@ -14,7 +14,7 @@ public class Ogre extends A_ClassPhysicalWarrior
 
  public Ogre()
  {
-  super(new Inventory(),"Ogre",400,100,30,60,.6);
+  super(new Inventory(),"Ogre",200,100,20,30,.6);
  }
  
  public Ogre(int minDamage, int maxDamage)
