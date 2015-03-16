@@ -815,7 +815,10 @@ public class Dungeon implements Observer {
  
  public A_Class enemyToAttack(ArrayList<A_Class> enemies)
  {
-  return enemies.get((int)Math.random()*enemies.size());
+  for (A_Class enemy: enemies)
+   if (!enemy.isDead())
+    return enemy;
+  return enemies.get(0);
  }
  
  public void combatMessage(String message)

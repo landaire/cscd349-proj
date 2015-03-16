@@ -97,7 +97,7 @@ public class BattleArena
     if (num > 0)
      _currEnemy.usePotion();
     else
-     _dungeon.combatMessage(_currEnemy.attack(_theParty[(int) Math.random() * _theParty.length + 1]));
+     _dungeon.combatMessage(_currEnemy.attack(_theParty[(int) (Math.random() * _theParty.length)]));
     // if attack, choose a random hero to attack
     // attack hero and end turn
     checkIfAlive();
