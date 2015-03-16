@@ -106,7 +106,7 @@ public abstract class A_Class
  public String defend()
  {
   if (_HP < 0)
-   return _name+" is critically dead with "+_HP+" health missing";
+   return _name+" is dead";
   
   return _name+" has "+_HP+" health remaining";
  }

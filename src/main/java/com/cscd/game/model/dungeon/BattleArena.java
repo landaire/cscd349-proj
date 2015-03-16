@@ -76,10 +76,10 @@ public class BattleArena
      // if they want to attack give them a list of enemies to attack
      case ATTACK:
       enemyToAttack = enemyToAttack();
-      _log += (_currHero.attack(enemyToAttack));
+      _log += "\r\n" + (_currHero.attack(enemyToAttack));
       break;
      case POTION:
-      _log += _currHero.usePotion();
+      _log += "\r\n" + _currHero.usePotion();
       break;
      // execute attack on the enemy and end turn
      case HEAL:
@@ -93,12 +93,12 @@ public class BattleArena
  {
   A_Class choice;
   int i;
-  while (true)
+  while (_encounter.size() > 0)
   {
    clearTerm();
-   int line = 0;
+   int line = 1;
    i = 1;
-  _term.mvputs(line,0, "Choose who to attack");
+  _term.mvputs(line, 0, "Choose who to attack");
   for (A_Class enemy: _encounter)
   {
    if (!enemy.isDead())
@@ -116,13 +116,15 @@ public class BattleArena
     continue;
    if (key >= '1' && key <= Integer.toString(_encounter.size()).charAt(0))
    {
-    choice = _encounter.get(Integer.parseInt(Character.toString((char) key))-(_encounter.size() - i));
+    choice = _encounter.get(Integer.parseInt(Character.toString((char) key)) - 1);
     if (choice.isDead())
-     continue;
+        _encounter.remove(choice);
+        continue;
     else
      break;
    }
   }
+
   return choice;
 
  }
@@ -205,8 +207,8 @@ public class BattleArena
   while (true)
   {
    clearTerm();
-   int line = 0;
-  _term.mvputs(line,0, "Choose an option for "+_currHero);
+   int line = 1;
+  _term.mvputs(line, 0, "Choose an option for "+_currHero);
   _term.mvputs(line+=2,0, "1. Attack");
   _term.mvputs(line+=2,0, "2. Potion");
   _term.mvputs(line+=2,0, "3. Heal");
