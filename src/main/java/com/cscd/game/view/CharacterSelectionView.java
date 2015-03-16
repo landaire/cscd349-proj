@@ -51,7 +51,6 @@ public class CharacterSelectionView extends AbstractView {
             }
 
             int last = term.getHeight() - 1;
-            term.mvputs(last-1, 0, "Press '?' for Help.");
             if(characterCount >= 2)
             {
                 alignRight(last-0, "Press C to continue");
