@@ -25,8 +25,9 @@ public class EnemyCharacterFactory
  public ArrayList<A_Class> getEnemies()
  {
   Random num = new Random(System.currentTimeMillis());
+  int amount = (int)(Math.random()*3)+2;
   ArrayList<A_Class> enemies = new ArrayList<>();
-  for (int i = 0; i < 7; i++)
+  for (int i = 0; i < amount; i++)
   {
    switch (num.nextInt(7))
    {

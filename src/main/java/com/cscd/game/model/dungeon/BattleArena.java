@@ -100,8 +100,7 @@ public class BattleArena
      _dungeon.combatMessage(_currEnemy.attack(_theParty[(int) Math.random() * _theParty.length + 1]));
     // if attack, choose a random hero to attack
     // attack hero and end turn
-    if (!checkIfAlive())
-     return;
+    checkIfAlive();
    }
   }
 
@@ -109,7 +108,7 @@ public class BattleArena
 
  private boolean checkIfAlive()
  {
-  int i = 1;
+  int i = 0;
   for (A_Class hero: _theParty)
   {
    if (hero.isDead())
@@ -118,6 +117,7 @@ public class BattleArena
   if (i == _theParty.length)
    _dungeon.gameOver("All heroes are dead");
 
+  i = 0;
   for (A_Class enemy: _encounter)
   {
    if (enemy.isDead())

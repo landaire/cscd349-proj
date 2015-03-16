@@ -117,4 +117,9 @@ public abstract class A_Class
   return this.getName()+" attacks "+enemy.getName()+" for "+attack+" damage "+ (isDead() ? enemy.getName()+" has been defeated" : "\n"+enemy.defend());
  }
  
+ public String toString()
+ {
+  return _name;
+ }
+ 
 }
