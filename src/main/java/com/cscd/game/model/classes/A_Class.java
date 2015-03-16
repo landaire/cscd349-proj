@@ -25,7 +25,7 @@ public abstract class A_Class
    throw new RuntimeException("no name");
   _inventory = inventory;
   _name = name;
-  _HP = HP;
+  _HP = _maxHP = HP;
   _maxDamage = HP;
   _MP = MP;
   _minDamage = minDamage;
@@ -69,6 +69,13 @@ public abstract class A_Class
   return _chanceToHit;
  }
  
+ public void takeDamage(int damage)
+ {
+  _HP -= damage;
+  if (_HP <= 0)
+   _isDead = true;
+ }
+ 
  public boolean isDead()
  {
   return _isDead;
@@ -82,8 +89,32 @@ public abstract class A_Class
    _HP += HP;
  }
  
- public abstract void defend(A_Class enemy);
+ public void usePotion()
+ {
+  heal(_inventory.consumePotion());
+ }
  
- public abstract int attack(A_Class enemy);
+ public int getMaxHP()
+ {
+  return _maxHP;
+ }
+ 
+ public String defend()
+ {
+  if (_HP < 0)
+   return _name+" is critically dead with "+_HP+" health missing";
+  
+  return _name+" has "+_HP+" health remaining";
+ }
+
+ public String attack(A_Class enemy)
+ {
+  if (enemy.isDead())
+   return enemy.getName()+" has already been defeated";
+  
+  int attack = (int)(Math.random() * (this.getMaxDamage() - this.getMinDamage()) +1) + this.getMinDamage();
+  enemy.takeDamage(attack);
+  return this.getName()+" attacks "+enemy.getName()+" for "+attack+" damage "+ (isDead() ? enemy.getName()+" has been defeated" : "\n"+enemy.defend());
+ }
  
 }

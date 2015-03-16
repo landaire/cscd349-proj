@@ -5,7 +5,7 @@ package com.cscd.game.model.weapons;
  * Lander Brandt
  * Tony Moua
  */
-public abstract class A_Weapon
+public abstract class A_Weapon implements Cloneable
 {
  private int _minDamage;
  private int _maxDamage;

@@ -3,6 +3,7 @@ package com.cscd.game.event.listener;
 import com.cscd.game.event.EventDispatcherFactory;
 import com.cscd.game.event.PartyMoveEvent;
 import com.cscd.game.event.RandomEncounterEvent;
+import com.cscd.game.ui.character.Party;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -31,7 +32,7 @@ public class PartyMoveListener implements Observer {
             if (rand.nextInt(101) > 75) {
                 encounters++;
                 System.out.println("Random encounter");
-                EventDispatcherFactory.get().notify(new RandomEncounterEvent());
+                EventDispatcherFactory.get().notify(new RandomEncounterEvent(((PartyMoveEvent) arg).party()));
             }
         } else {
             steps--;

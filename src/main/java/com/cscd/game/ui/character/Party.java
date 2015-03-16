@@ -172,4 +172,9 @@ public class Party implements Moveable, Positionable {
     private PositionableObject headPartyMember() {
         return party.get(0);
     }
+ 
+ public Dungeon getDungeon()
+ {
+  return dungeon;
+ }
 }

@@ -1,6 +1,5 @@
 package com.cscd.game.model.characters.builder;
 
-import com.cscd.game.model.characters.bad.I_IsBad;
 import com.cscd.game.model.characters.good.*;
 import com.cscd.game.model.classes.A_Class;
 

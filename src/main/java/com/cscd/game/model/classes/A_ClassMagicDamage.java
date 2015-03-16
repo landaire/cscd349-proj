@@ -15,10 +15,4 @@ public abstract class A_ClassMagicDamage extends A_ClassMagic
   super(inventory, name, HP, MP, minDamage, maxDamage, chanceToHit);
   _range = range;
  }
-
- @Override
- public int attack(A_Class enemy)
- {
-  return 0;
- }
 }

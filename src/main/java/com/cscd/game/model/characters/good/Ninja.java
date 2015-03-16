@@ -12,10 +12,11 @@ public class Ninja extends A_ClassPhysicalRogue
     public static final String TYPE = "Ninja";
  public Ninja()
  {
-  super(Ninja.TYPE,400,100,25,45,.7);
+  super(new Inventory(),Ninja.TYPE,400,100,25,45,.7);
  }
- public Ninja(String name, int HP, int MP, int minDamage, int maxDamage, double chanceToHit)
+ 
+ public Ninja(Inventory inventory, String name, int HP, int MP, int minDamage, int maxDamage, double chanceToHit)
  {
-  super(name, HP, MP, minDamage, maxDamage, chanceToHit);
+  super(inventory, name, HP, MP, minDamage, maxDamage, chanceToHit);
  }
 }

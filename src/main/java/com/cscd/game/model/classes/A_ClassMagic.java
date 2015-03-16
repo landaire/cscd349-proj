@@ -13,10 +13,4 @@ public abstract class A_ClassMagic extends A_Class
  {
   super(inventory, name, HP, MP, minDamage, maxDamage, chanceToHit);
  }
-
- @Override
- public void defend(A_Class enemy)
- {
-
- }
 }

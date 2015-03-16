@@ -12,10 +12,10 @@ public class Warlock extends A_ClassMagicDamageWarlock
     public static final String TYPE = "Warlock";
  public Warlock()
  {
-  super(Warlock.TYPE,400,100,20,40,.7,20);
+  super(new Inventory(),Warlock.TYPE,400,100,20,40,.7,20);
  }
- public Warlock(String name, int HP, int MP, int minDamage, int maxDamage, double chanceToHit, int range)
+ public Warlock(Inventory inventory, String name, int HP, int MP, int minDamage, int maxDamage, double chanceToHit, int range)
  {
-  super(name, HP, MP, minDamage, maxDamage, chanceToHit, range);
+  super(inventory,name, HP, MP, minDamage, maxDamage, chanceToHit, range);
  }
 }

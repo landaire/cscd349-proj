@@ -12,10 +12,10 @@ public class Beast extends A_ClassPhysicalWarrior
     public static final String TYPE = "Beast";
  public Beast()
  {
-  super(Beast.TYPE,500,100,70,95,.8);
+  super(new Inventory(), Beast.TYPE,500,100,70,95,.8);
  }
- public Beast(String name, int HP, int MP, int minDamage, int maxDamage, double chanceToHit)
+ public Beast(Inventory inventory, String name, int HP, int MP, int minDamage, int maxDamage, double chanceToHit)
  {
-  super(name, HP, MP, minDamage, maxDamage, chanceToHit);
+  super(inventory, name, HP, MP, minDamage, maxDamage, chanceToHit);
  }
 }

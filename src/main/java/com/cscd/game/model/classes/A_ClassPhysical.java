@@ -13,16 +13,4 @@ public abstract class A_ClassPhysical extends A_Class
  {
   super(inventory, name, HP, MP, minDamage, maxDamage, chanceToHit);
  }
-
- @Override
- public int attack(A_Class enemy)
- {
-  return 0;
- }
-
- @Override
- public void defend(A_Class enemy)
- {
-
- }
 }

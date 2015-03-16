@@ -12,10 +12,10 @@ public class Hospital extends A_ClassMagicHealerPriest
     public static final String TYPE = "Hospital";
  public Hospital()
  {
-  super(Hospital.TYPE,300,100,10,30,.6,100);
+  super(new Inventory(),Hospital.TYPE,300,100,10,30,.6,100);
  }
- public Hospital(String name, int HP, int MP, int minDamage, int maxDamage, double chanceToHit, int healAmount)
+ public Hospital(Inventory inventory, String name, int HP, int MP, int minDamage, int maxDamage, double chanceToHit, int healAmount)
  {
-  super(name, HP, MP, minDamage, maxDamage, chanceToHit, healAmount);
+  super(inventory, name, HP, MP, minDamage, maxDamage, chanceToHit, healAmount);
  }
 }

@@ -807,4 +807,27 @@ public class Dungeon implements Observer {
 
         this.player.setCharacters(chosenCharacters.toArray(new A_Class[chosenCharacters.size()]));
     }//end choose
+
+ public int getOption()
+ {
+  return 0;  
+ }
+ 
+ public A_Class enemyToAttack(ArrayList<A_Class> enemies)
+ {
+  return enemies.get((int)Math.random()*enemies.size());
+ }
+ 
+ public void combatMessage(String message)
+ {
+  System.out.println(message);
+  
+ }
+ 
+ public void gameOver(String string)
+ {
+  System.out.println(string);
+  System.exit(0);
+ }
+ 
 }
