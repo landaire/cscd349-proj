@@ -65,30 +65,15 @@ public class Dungeon implements Observer {
     private final static Positionable MAP_START = new Point(1, 0);
     private final static Positionable MAP_END = new Point(-1, 0);
     private Positionable upperLeft = new Point(0, 0);
-    private Integer underPlayer = -1;
     private boolean dirtyMsg = false;
     private boolean dirtyStatus = false;
     private String message;
     private float noisePlane;
     private Set<Integer> passable;
     private List<Map<Integer, Representation>> representations = new ArrayList<>();
-    private int represent = 0;
+    private int mapRepresentation = 0;
     private boolean splashShown = false;
     private boolean partySelectionShown = false;
-    private String helpMessage =
-"Dungeon Example Commands\n" +
-"============================================================================\n" +
-"Ctrl+L : recenter and redisplay the screen\n" +
-"j, Down : move down                  | k, Up : move up\n" +
-"h, Left : move left                  | l (ell), Right: move right\n" +
-"\n" +
-"Space : next representation set      | Backspace : previous representations\n" +
-"\n" +
-"Q, q, Escape : quit\n" +
-"\n" +
-"L : show my license                  | N : show legal notices\n" +
-"\n" +
-"? : this help screen\n";
 
     public void addRepresentations() {
 
@@ -309,7 +294,7 @@ public class Dungeon implements Observer {
         }
         // simpleDigger.digRoomAvoidanceHalls(bsp, grid, config);
         simpleDigger.digHallFirst(bsp, grid, ConfigFactory.getConfig(), false);
-        underPlayer = ConfigFactory.get("room:floor");
+        Integer underPlayer = ConfigFactory.get("room:floor");
         Positionable pos = rooms.get(idx).placeThing(grid, underPlayer, ConfigFactory.get("player"));
         this.player.setPosition(pos);
 
@@ -325,7 +310,7 @@ public class Dungeon implements Observer {
         if (ex <= 0) {
             ex += term.getWidth();
         }
-        Map<Integer, Representation> currentRep = this.representations.get(this.represent);
+        Map<Integer, Representation> currentRep = this.representations.get(this.mapRepresentation);
         for (int y = MAP_START.getY(); y < ey; y++) {
             for (int x = MAP_START.getX(); x < ex; x++) {
                 int y1 = y + upperLeft.getY() - MAP_START.getY();
@@ -490,15 +475,15 @@ public class Dungeon implements Observer {
                 player.moveBy(0,  +1);
                 break;
             case ' ':
-                this.represent ++;
-                if (this.represent >= this.representations.size()) {
-                    this.represent = 0;
+                this.mapRepresentation++;
+                if (this.mapRepresentation >= this.representations.size()) {
+                    this.mapRepresentation = 0;
                 }
                 break;
             case BlackenKeys.KEY_BACKSPACE:
-                this.represent --;
-                if (this.represent < 0) {
-                    this.represent = this.representations.size() -1;
+                this.mapRepresentation--;
+                if (this.mapRepresentation < 0) {
+                    this.mapRepresentation = this.representations.size() -1;
                 }
                 break;
             case 'q':
@@ -667,6 +652,22 @@ public class Dungeon implements Observer {
 
     private void showHelp() {
         ViewerHelper vh;
+
+        String helpMessage =
+                "Dungeon Example Commands\n" +
+                        "============================================================================\n" +
+                        "Ctrl+L : recenter and redisplay the screen\n" +
+                        "j, Down : move down                  | k, Up : move up\n" +
+                        "h, Left : move left                  | l (ell), Right: move right\n" +
+                        "\n" +
+                        "Space : next representation set      | Backspace : previous representations\n" +
+                        "\n" +
+                        "Q, q, Escape : quit\n" +
+                        "\n" +
+                        "L : show my license                  | N : show legal notices\n" +
+                        "\n" +
+                        "? : this help screen\n";
+
         vh = new ViewerHelper(term, "Help", helpMessage);
         vh.setColor(7, 0);
         vh.run();
