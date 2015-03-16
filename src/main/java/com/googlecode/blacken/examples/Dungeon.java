@@ -808,6 +808,10 @@ public class Dungeon implements Observer {
         this.player.setCharacters(chosenCharacters.toArray(new A_Class[chosenCharacters.size()]));
     }//end choose
 
+ public CursesLikeAPI getTerminal()
+ {
+  return term;
+ }
  public int getOption()
  {
   return 0;  
@@ -832,5 +836,4 @@ public class Dungeon implements Observer {
   System.out.println(string);
   System.exit(0);
  }
- 
 }

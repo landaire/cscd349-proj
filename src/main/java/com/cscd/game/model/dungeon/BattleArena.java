@@ -3,6 +3,8 @@ package com.cscd.game.model.dungeon;
 import com.cscd.game.model.classes.A_Class;
 import com.cscd.game.ui.character.Party;
 import com.googlecode.blacken.examples.Dungeon;
+import com.googlecode.blacken.terminal.BlackenKeys;
+import com.googlecode.blacken.terminal.CursesLikeAPI;
 
 import java.util.ArrayList;
 
@@ -24,20 +26,24 @@ public class BattleArena
  private A_Class _currEnemy;
  private A_Class _currHero;
  private A_Class[] _theParty;
+ private CursesLikeAPI _term;
+ private String _log;
 
  public BattleArena(Party party, ArrayList<A_Class> encounter, boolean surpriseAttack, Dungeon dungeon)
  {
   _encounter = encounter;
   _party = party;
   _dungeon = dungeon;
+  _term = _dungeon.getTerminal();
+  _log = "";
   battle(surpriseAttack);
  }
 
  private void battle(boolean surpriseAttack)
  {
   boolean cont = true;
-  _dungeon.combatMessage("Our heroes have encountered enemies!\n" +
-      _encounter);
+
+  clearTerm();
   _theParty = _party.getCharacters();
 
   _currEnemy = _encounter.get(0);
@@ -61,12 +67,13 @@ public class BattleArena
    A_Class enemyToAttack;
    if (!_currHero.isDead())
    {
-    switch (_dungeon.getOption())
+    switch (getOption())
     {
      // if they want to attack give them a list of enemies to attack
      case ATTACK:
       enemyToAttack = _dungeon.enemyToAttack(_encounter);
-      _dungeon.combatMessage(_currHero.attack(enemyToAttack));
+      clearTerm();
+      combatMessage(_currHero.attack(enemyToAttack));
       break;
      case POTION:
       _currHero.usePotion();
@@ -79,8 +86,15 @@ public class BattleArena
   }
  }
 
+ private void combatMessage(String string)
+ {
+  int line = 3;
+  _term.mvputs(0,line,string);
+ }
+
  private void enemyTurn()
  {
+  _log = "";
   // roll die to either attack or use potion (don't use potion at full health)
   for (int i = 0; i < _encounter.size(); i++)
   {
@@ -97,7 +111,7 @@ public class BattleArena
     if (num > 0)
      _currEnemy.usePotion();
     else
-     _dungeon.combatMessage(_currEnemy.attack(_theParty[(int) (Math.random() * _theParty.length)]));
+    _log +=_currEnemy.attack(_theParty[(int) (Math.random() * _theParty.length)]) + "\n";
     // if attack, choose a random hero to attack
     // attack hero and end turn
     checkIfAlive();
@@ -127,5 +141,42 @@ public class BattleArena
    return false;
 
   return true;
+ }
+
+ private void clearTerm()
+ {
+  _term.clear();
+  _term.setCurBackground(0);
+  _term.setCurForeground(7);
+  String header = "Our heroes have encountered enemies!";
+  _term.mvputs(0,_term.getWidth()/2-header.length()/2,header);
+  _term.mvputs(0,_term.getWidth()/2,_log);
+ }
+
+
+ private int getOption()
+ {
+  clearTerm();
+  int option = -1;
+  int line = 3;
+  _term.mvputs(0, line++, "Choose an option");
+  ;
+  _term.mvputs(0, line++, "1. Attack");
+  _term.mvputs(0, line++, "2. Potion");
+  _term.mvputs(0, line++, "3. Heal");
+
+  int key = BlackenKeys.NO_KEY;
+  while (key == BlackenKeys.NO_KEY)
+  {
+   key = _term.getch(200);
+   if (key == BlackenKeys.NO_KEY || key == BlackenKeys.RESIZE_EVENT)
+    continue;
+   if (key >= '0' && key <= '3')
+   {
+    option = Integer.parseInt(Character.toString((char) key));
+    break;
+   }
+  }
+  return option;
  }
 }
