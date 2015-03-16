@@ -33,8 +33,12 @@ public class Loot
    if (i == numDrop)
     break;
   }
-
-  return "The party found "+numDrop+" potions on the corpses of their enemies\n";
+  String returnItems = "";
+   for (i = 0; i < numDrop; i++)
+   {
+    returnItems += "Looted a potion\n";
+   }
+  return returnItems;
  }
 
  private void shuffleArray(A_Class[] array)

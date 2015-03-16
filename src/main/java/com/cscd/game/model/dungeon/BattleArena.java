@@ -62,8 +62,8 @@ public class BattleArena
    cont = checkIfAlive();
   }
   Loot loot = new Loot(_theParty);
-  _log = loot.generateLoot();
-  displayLoot();
+  displayLoot(loot.generateLoot());
+  _dungeon.refreshScreen();
  }
 
  private void heroTurn()
@@ -275,9 +275,22 @@ public class BattleArena
   return option;
  }
 
- private void displayLoot()
+ private void displayLoot(String loot)
  {
-  _term.clear();
-  _term.mvputs(_term.getHeight(),_term.getWidth()/2,_log);
+  String[] lootItems = loot.split("/n");
+  while (true)
+  {
+   int i = 1;
+   _term.clear();
+   for (String item: lootItems)
+   _term.mvputs(i+=2,_term.getWidth()/2 - item.length()/2,item);
+   int key = BlackenKeys.NO_KEY;
+   while (key == BlackenKeys.NO_KEY)
+    key = _term.getch(key);
+   if (key == BlackenKeys.NO_KEY || key == BlackenKeys.RESIZE_EVENT)
+    continue;
+   else
+    break;
+  }
  }
 }
