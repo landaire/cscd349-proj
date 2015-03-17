@@ -16,6 +16,8 @@ Adventure through the dungeons and halls to find your first key, which is just t
 
 ## Combat system
 
+You will randomly encounter enemies as you move around the map. When you do encounter a party, a menu appears where you can choose different attack methods and will end when either you or the enemy party is dead.
+
 # Technical aspects
 
 
