@@ -36,7 +36,7 @@ public class Loot
   String returnItems = "";
    for (i = 0; i < numDrop; i++)
    {
-    returnItems += "Looted a potion\n";
+    returnItems += "Potion\n";
    }
   return returnItems;
  }

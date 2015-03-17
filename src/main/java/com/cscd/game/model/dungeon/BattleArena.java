@@ -282,8 +282,10 @@ public class BattleArena
   {
    int i = 1;
    _term.clear();
+   _term.mvputs(i++,0,"Your party has defeated the encounter!");
+   _term.mvputs(i++,0,"Your party has looted: ");
    for (String item: lootItems)
-   _term.mvputs(i+=2,_term.getWidth()/2 - item.length()/2,item);
+    _term.mvputs(i++,0,item);
    int key = BlackenKeys.NO_KEY;
    while (key == BlackenKeys.NO_KEY)
     key = _term.getch(key);
