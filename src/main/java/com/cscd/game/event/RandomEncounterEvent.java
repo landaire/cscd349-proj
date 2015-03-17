@@ -28,6 +28,13 @@ public class RandomEncounterEvent {
  public void engageBattle()
  {
   new BattleArena(_party,_encounter, surpriseAttack(),_dungeon);
+     for (A_Class character : _party.getCharacters()) {
+         if (character.isDead()) {
+             _party.removeCharacter(character);
+         }
+     }
+
+     _dungeon.refreshScreen();
  }
  
  public boolean surpriseAttack()

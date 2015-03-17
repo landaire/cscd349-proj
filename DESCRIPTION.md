@@ -1,3 +1,7 @@
+Lander Brandt  
+Tony Mouya  
+Sean Burright
+
 # General overview
 
 This is a maze-based game where the objective is to go through the dungeons and halls collecting keys in ascending order (from 1-9) while having random encounters with enemies along the way.
