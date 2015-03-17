@@ -13,7 +13,7 @@ import java.util.Random;
  * Created by Lander Brandt on 3/12/15.
  */
 public class PartyMoveListener implements Observer {
-    private static int steps = 50;
+    private static int steps = 100;
     private static int encounters = 0;
     private static Random rand = new Random(System.currentTimeMillis());
 
